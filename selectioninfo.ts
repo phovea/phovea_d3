@@ -16,12 +16,13 @@ export class SelectionIDType {
 
   constructor(public idType: idtypes.IDType, parent: d3.Selection<any>, private options : any = {}) {
     this.options = C.mixin({
+      addClear: true
     }, options);
     idType.on('select', this.l);
     this.$div = parent.append('div');
-    this.$div.append('span').text(idType.name).style('cursor','pointer').attr('title','click to clear selection');
+    this.$div.append('span').text(idType.name);
     if (this.options.addClear) {
-      this.$div.select('span').on('click', () => {
+      this.$div.select('span').style('cursor','pointer').attr('title','click to clear selection').on('click', () => {
         this.options.selectionTypes.forEach((s) => idType.clear(s));
       });
     }
