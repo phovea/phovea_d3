@@ -67,7 +67,7 @@ export function defineVis(name: string, defaultOptions : any, initialSize : any,
     this.name = name;
     this.$parent = d3.select(parent);
     this.initialSize = d3.functor(initialSize);
-    this.options = C.mixin(d3.functor(defaultOptions).call(this,data, options || {}), options);
+    this.options = C.mixin({}, d3.functor(defaultOptions).call(this,data, options || {}), options);
     if (C.isFunction(this.init)) {
       this.init(data);
     }
