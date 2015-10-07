@@ -14,15 +14,19 @@ export class SelectionIDType {
   private $div: d3.Selection<any>;
   private $ul : d3.Selection<any>;
 
-  constructor(public idType: idtypes.IDType, parent: d3.Selection<any>, private options : any = {}) {
-    this.options = C.mixin({
-      addClear: true
-    }, options);
+  private options = {
+    addClear: true,
+    selectionTypes: [ idtypes.defaultSelectionType, idtypes.hoverSelectionType],
+    filterSelectionTypes : <(selectionType: string) => boolean>C.constantTrue
+  };
+
+  constructor(public idType: idtypes.IDType, parent: d3.Selection<any>, options : any = {}) {
+    C.mixin(this.options, options);
     idType.on('select', this.l);
     this.$div = parent.append('div');
     this.$div.append('span').text(idType.name);
     if (this.options.addClear) {
-      this.$div.select('span').style('cursor','pointer').attr('title','click to clear selection').on('click', () => {
+      this.$div.append('span').text(' (clear)').style('cursor','pointer').attr('title','click to clear selection').on('click', () => {
         this.options.selectionTypes.forEach((s) => idType.clear(s));
       });
     }
@@ -62,12 +66,14 @@ export class SelectionInfo {
     this.handler.push(new SelectionIDType(idtype, this.$div, this.options));
   };
 
-  constructor(public parent:HTMLElement, private options = {}) {
-    this.options = C.mixin({
-      addClear : true,
-      selectionTypes: [ idtypes.defaultSelectionType, idtypes.hoverSelectionType],
-      filterSelectionTypes : C.constantTrue
-    }, options);
+  private options = {
+    addClear : true,
+    selectionTypes: [ idtypes.defaultSelectionType, idtypes.hoverSelectionType],
+    filterSelectionTypes : C.constantTrue
+  };
+
+  constructor(public parent:HTMLElement, options = {}) {
+    C.mixin(this.options, options);
     this.build(d3.select(parent));
   }
 
