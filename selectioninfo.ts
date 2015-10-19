@@ -30,7 +30,7 @@ export class SelectionIDType {
         this.options.selectionTypes.forEach((s) => idType.clear(s));
       });
     }
-    this.$ul = this.$div.append('ul');
+    this.$ul = this.$div.append('div');
 
     this.options.selectionTypes.forEach((s) => this.update(s, idType.selections(s)));
   }
@@ -41,14 +41,18 @@ export class SelectionIDType {
     }
 
     this.$div.classed('no-selection-' + type, selection.isNone);
+    var elem = this.$ul.select('span.select-'+type);
     if (selection.isNone) {
-      this.$ul.selectAll('li.select-'+type).remove();
+      elem.remove();
       return;
     }
-    var $li = this.$ul.selectAll('li.select-'+type).data(selection.dim(0).asList());
-    $li.enter().append('li').classed('select-' + type, true);
-    $li.exit().remove();
-    $li.text(C.identity);
+
+    if (elem.empty()) {
+      elem = this.$ul.append('span').classed('select-'+type,true);
+    }
+
+    var ids = selection.dim(0).asList();
+    elem.text(ids.join(', '));
   }
 
   destroy() {
