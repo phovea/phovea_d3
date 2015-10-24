@@ -15,24 +15,27 @@ import idtypes = require('../caleydo_core/idtype');
 
 export function parseRemoteMatrix(url: string, options: any = {}): Promise<matrix.IMatrix> {
     return new Promise((resolve, reject) => {
-        d3.csv(url, (error, data)  => {
+        d3.text(url, (error, data)  => {
             if (error) {
                 reject(error);
             }
-            resolve(parseMatrix(data, options));
+            const rows = d3.csv.parseRows(data);
+            resolve(parseMatrix(rows, options));
         });
     });
 }
 
-
+function isNumeric(obj) {
+  return (obj - parseFloat(obj) + 1) >= 0;
+}
 
 function guessValue(arr: any[]) {
     if (arr.length === 0) {
         return { type: 'string'}; //doesn't matter
     }
     const test = arr[0];
-    if (typeof test === 'number') {
-        return { type: 'real', range: d3.extent(arr)};
+    if (typeof test === 'number' || isNumeric(test)) {
+        return { type: 'real', range: d3.extent(arr.map(parseFloat))};
     }
     const values = d3.set(arr);
     if (values.size() < arr.length * 0.2 || values.size() < 8) {
@@ -50,7 +53,6 @@ export function parseMatrix(data:any[][], rows: string[], cols: string[], option
 export function parseMatrix(data:any[][], rows_or_options?: any, cols_def?: string[], options: any = {}): matrix.IMatrix {
     const rows = Array.isArray(rows_or_options) ? <string[]>rows_or_options : data.map((r) => r[0]);
     const cols = cols_def ? cols_def : data[0].slice(1);
-    const realdata = Array.isArray(rows_or_options) ? data : data.slice(1).map((r) => r.slice(1));
     if (typeof rows_or_options === 'object') {
         options = rows_or_options;
     }
@@ -71,16 +73,19 @@ export function parseMatrix(data:any[][], rows_or_options?: any, cols_def?: stri
 
 
     const ddesc : any = localdesc;
-    ddesc.dim = ddesc.dim || [rows.length, cols.length];
-    ddesc.value = ddesc.value || guessValue([].concat(realdata));
-
+    ddesc.size = ddesc.size || [rows.length, cols.length];
+    var realdata = Array.isArray(rows_or_options) ? data : data.slice(1).map((r) => r.slice(1));
+    ddesc.value = ddesc.value || guessValue([].concat.apply([],realdata));
+    if (ddesc.value.type === 'real') {
+        realdata = realdata.map((row) => row.map(parseFloat));
+    }
     const loader = {
         rowIds: (desc:datatypes.IDataDescription, range:ranges.Range) => Promise.resolve(localdesc.rowassigner(range.filter(rows))),
         colIds: (desc:datatypes.IDataDescription, range:ranges.Range) => Promise.resolve(localdesc.rowassigner(range.filter(cols))),
         ids: (desc:datatypes.IDataDescription, range:ranges.Range) => {
             const rc = localdesc.rowassigner(range.dim(0).filter(rows));
             const cc = localdesc.colassigner(range.dim(1).filter(cols));
-            return ranges.join(rc, cc);
+            return Promise.resolve(ranges.join(rc, cc));
         },
         at: (desc:datatypes.IDataDescription, i, j) => Promise.resolve(realdata[i][j]),
         rows: (desc:datatypes.IDataDescription, range:ranges.Range) => Promise.resolve(range.filter(rows)),
@@ -98,7 +103,7 @@ export function parseRemoteTable(url: string, options: any = {}): Promise<table.
             if (error) {
                 reject(error);
             }
-            resolve(parseTable(data, options));
+            resolve(parseObjects(data, options));
         });
     });
 }
@@ -125,13 +130,56 @@ export function parseTable(data:any[][], options:any = {}): table.ITable {
 
     const rows = data.map((r) => r[0]);
     const cols = data[0].slice(1);
-    const realdata = data.slice(1).map((r) => r.slice(1));
+    var realdata = data.slice(1).map((r) => r.slice(1));
+    const ddesc : any = localdesc;
+    ddesc.size = ddesc.size || [rows.length, cols.length];
+
+    ddesc.columns = ddesc.columns || cols.map((col, i) => {
+      return {
+          name: col,
+          value : guessValue(realdata.map((row) => row[i]))
+      };
+    });
+    realdata = realdata.map((row) => ddesc.columns.map((col, i) => (col.value.type === 'real') ? parseFloat(row[i]) : row[i]));
     const objs = to_objects(realdata, cols);
+
+    ddesc.loader = (desc: datatypes.IDataDescription) => {
+        const r = {
+            rowIds: localdesc.rowassigner(rows),
+            rows: rows,
+            objs: objs,
+            data: realdata,
+        };
+        return Promise.resolve(r);
+    };
+    return table_impl.create(localdesc);
+}
+
+function to_list(objs: any[], cols: string[]) {
+    return objs.map((obj) => cols.map((c) => obj[c]));
+}
+
+export function parseObjects(data:any[], options:any = {}): table.ITable {
+    const id = C.uniqueString('localData');
+    var localdesc = {
+        type: 'table',
+        id: id,
+        name: id,
+        fqname: id,
+        idtype: '_rows',
+        rowassigner: idtypes.createLocalAssigner(),
+        keyProperty: '_id'
+    };
+    C.mixin(localdesc, options);
+
+    const rows = data.map((r,i) => r[localdesc.keyProperty] || i);
+    const cols = Object.keys(data[0]);
+    const objs = data;
+    const realdata = to_list(objs, cols);
 
     const ddesc : any = localdesc;
     ddesc.dim = ddesc.dim || [rows.length, cols.length];
 
-    //TODO generate column descriptions
     ddesc.columns = ddesc.columns || cols.map((col, i) => {
       return {
           name: col,
