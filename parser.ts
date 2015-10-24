@@ -29,7 +29,7 @@ function isNumeric(obj) {
   return (obj - parseFloat(obj) + 1) >= 0;
 }
 
-function guessValue(arr: any[]) {
+function guessValue(arr: any[]) : any {
     if (arr.length === 0) {
         return { type: 'string'}; //doesn't matter
     }
