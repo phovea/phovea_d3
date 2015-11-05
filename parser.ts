@@ -93,7 +93,7 @@ export function parseMatrix(data:any[][], rows_or_options?: any, cols_def?: stri
         data: (desc:datatypes.IDataDescription, range:ranges.Range) => Promise.resolve(range.filter(realdata))
     };
 
-    return matrix_impl.create(localdesc, loader);
+    return matrix_impl.create(<datatypes.IDataDescription>(<any>localdesc), loader);
 }
 
 
@@ -152,7 +152,7 @@ export function parseTable(data:any[][], options:any = {}): table.ITable {
         };
         return Promise.resolve(r);
     };
-    return table_impl.create(localdesc);
+    return table_impl.create(<any>localdesc);
 }
 
 function to_list(objs: any[], cols: string[]) {
@@ -196,5 +196,5 @@ export function parseObjects(data:any[], options:any = {}): table.ITable {
         };
         return Promise.resolve(r);
     };
-    return table_impl.create(localdesc);
+    return table_impl.create(<any>localdesc);
 }
