@@ -4,7 +4,7 @@
 /// <reference path="../../tsd.d.ts" />
 import C = require('../caleydo_core/main');
 import d3 = require('d3');
-import datatypes = require('../caleydo_core/datatype')
+import datatypes = require('../caleydo_core/datatype');
 import ranges = require('../caleydo_core/range');
 import matrix = require('../caleydo_core/matrix');
 import matrix_impl = require('../caleydo_core/matrix_impl');
@@ -124,7 +124,7 @@ export function parseTable(data:any[][], options:any = {}): table.ITable {
         name: id,
         fqname: id,
         idtype: '_rows',
-        rowassigner: idtypes.createLocalAssigner(),
+        rowassigner: idtypes.createLocalAssigner()
     };
     C.mixin(localdesc, options);
 
@@ -148,7 +148,7 @@ export function parseTable(data:any[][], options:any = {}): table.ITable {
             rowIds: localdesc.rowassigner(rows),
             rows: rows,
             objs: objs,
-            data: realdata,
+            data: realdata
         };
         return Promise.resolve(r);
     };
@@ -192,7 +192,7 @@ export function parseObjects(data:any[], options:any = {}): table.ITable {
             rowIds: localdesc.rowassigner(rows),
             rows: rows,
             objs: objs,
-            data: realdata,
+            data: realdata
         };
         return Promise.resolve(r);
     };
