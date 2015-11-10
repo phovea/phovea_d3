@@ -15,6 +15,7 @@ export class SelectionIDType {
   private $ul : d3.Selection<any>;
 
   private options = {
+    useNames: false,
     addClear: true,
     selectionTypes: [ idtypes.defaultSelectionType, idtypes.hoverSelectionType],
     filterSelectionTypes : <(selectionType: string) => boolean>C.constantTrue
@@ -50,9 +51,14 @@ export class SelectionIDType {
     if (elem.empty()) {
       elem = this.$ul.append('span').classed('select-'+type,true);
     }
-
-    var ids = selection.dim(0).asList();
-    elem.text(ids.join(', '));
+    if (this.options.useNames) {
+      this.idType.unmap(selection).then((names) => {
+        elem.text(names.join(', '));
+      });
+    } else {
+      var ids = selection.dim(0).asList();
+      elem.text(ids.join(', '));
+    }
   }
 
   destroy() {
@@ -71,6 +77,7 @@ export class SelectionInfo {
   };
 
   private options = {
+    useNames: false,
     addClear : true,
     selectionTypes: [ idtypes.defaultSelectionType, idtypes.hoverSelectionType],
     filterSelectionTypes : C.constantTrue
