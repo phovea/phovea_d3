@@ -51,7 +51,7 @@ export class SelectionIDType {
     if (elem.empty()) {
       elem = this.$ul.append('span').classed('select-'+type,true);
     }
-    if (this.options.useNames) {
+    if (this.options.useNames && this.idType.id.charAt(0) != '_' && !this.idType.internal) {
       this.idType.unmap(selection).then((names) => {
         elem.text(names.join(', '));
       });
@@ -73,14 +73,17 @@ export class SelectionInfo {
   private $div : d3.Selection<any>;
   private handler : SelectionIDType[] = [];
   private listener = (event, idtype) => {
-    this.handler.push(new SelectionIDType(idtype, this.$div, this.options));
+    if (this.options.filter(idtype)) {
+      this.handler.push(new SelectionIDType(idtype, this.$div, this.options));
+    }
   };
 
   private options = {
     useNames: false,
     addClear : true,
     selectionTypes: [ idtypes.defaultSelectionType, idtypes.hoverSelectionType],
-    filterSelectionTypes : C.constantTrue
+    filterSelectionTypes : <(selectionType: string) => boolean>C.constantTrue,
+    filter : <(idtype: idtypes.IDType) => boolean>C.constantTrue
   };
 
   constructor(public parent:HTMLElement, options = {}) {
