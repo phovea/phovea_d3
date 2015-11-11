@@ -106,50 +106,38 @@ export class DataBrowser extends events.EventHandler {
   }
 }
 
-export function hasDnDType(e, type) {
-  var types = e.dataTransfer.types;
-  if (C.isFunction(types.indexOf)) {
-    return types.indexOf(type) >= 0;
-  }
-  if (C.isFunction(types.includes)) {
-    return types.includes(type);
-  }
-  return false;
-}
-
-export function copyDnD(e) {
-  var dT = e.dataTransfer;
-  return (e.ctrlKey && dT.effectAllowed.match(/copy/gi)) || (!dT.effectAllowed.match(/move/gi));
-}
-export function updateDropEffect(e) {
-  var dT = e.dataTransfer;
-  if (copyDnD(e)) {
-    dT.dropEffect = 'copy';
-  } else {
-    dT.dropEffect = 'move';
-  }
-}
-
 export class DropDataItemHandler extends events.EventHandler {
-  constructor(elem:Element, private handler?:(d:datatypes.IDataType, op:string, pos:{ x: number, y : number}) => void) {
+  private options = {
+    types: []
+  };
+
+  constructor(elem:Element, private handler?:(d:datatypes.IDataType, op:string, pos:{ x: number, y : number}) => void, options = {}) {
     super();
+    C.mixin(this.options, options);
     this.register(d3.select(elem));
+  }
+
+  private checkType(e: any) {
+    if (this.options.types.length === 0) {
+      return C.hasDnDType(e, 'application/caleydo-data-item');
+    }
+    return this.options.types.some((t) => C.hasDnDType(e, 'application/caleydo-data-'+t));
   }
 
   private register($node:d3.Selection<any>) {
     $node.on('dragenter', () => {
       var e = d3.event;
       var xy = d3.mouse($node.node());
-      if (hasDnDType(e, 'application/caleydo-data-item')) {
+      if (this.checkType(e)) {
         this.fire('enter', {x: xy[0], y: xy[1]});
         return false;
       }
     }).on('dragover', () => {
       var e = d3.event;
       var xy = d3.mouse($node.node());
-      if (hasDnDType(e, 'application/caleydo-data-item')) {
+      if (this.checkType(e)) {
         e.preventDefault();
-        updateDropEffect(e);
+        C.updateDropEffect(e);
         this.fire('over', {x: xy[0], y: xy[1]});
         return false;
       }
@@ -159,7 +147,7 @@ export class DropDataItemHandler extends events.EventHandler {
       var e = <DragEvent>(<any>d3.event);
       e.preventDefault();
       var xy = d3.mouse($node.node());
-      if (hasDnDType(e, 'application/caleydo-data-item')) {
+      if (C.hasDnDType(e, 'application/caleydo-data-item')) {
         var id = JSON.parse(e.dataTransfer.getData('application/caleydo-data-item'));
         data.get(id).then((d) => {
           this.fire('drop', d, e.dataTransfer.dropEffect, {x: xy[0], y: xy[1]});
@@ -173,8 +161,8 @@ export class DropDataItemHandler extends events.EventHandler {
   }
 }
 
-export function makeDropable(elem:Element, onDrop?:(d:datatypes.IDataType, op:string, pos:{ x: number, y : number}) => void) {
-  return new DropDataItemHandler(elem, onDrop);
+export function makeDropable(elem:Element, onDrop?:(d:datatypes.IDataType, op:string, pos:{ x: number, y : number}) => void, options = {}) {
+  return new DropDataItemHandler(elem, onDrop, options);
 }
 
 export function makeDraggable<T>(sel:d3.Selection<T>, data_getter: (d:T) => datatypes.IDataType = C.identity) {
