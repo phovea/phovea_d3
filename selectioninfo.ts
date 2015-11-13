@@ -51,7 +51,7 @@ export class SelectionIDType {
     if (elem.empty()) {
       elem = this.$ul.append('span').classed('select-'+type,true);
     }
-    if (this.options.useNames && this.idType.id.charAt(0) != '_' && !this.idType.internal) {
+    if (this.options.useNames && this.idType.id.charAt(0) !== '_' && !this.idType.internal) {
       this.idType.unmap(selection).then((names) => {
         elem.text(names.join(', '));
       });
