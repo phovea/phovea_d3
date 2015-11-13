@@ -103,11 +103,15 @@ export function defineVis(name: string, defaultOptions : any, initialSize : any,
       return bak;
     }
     var size = this.rawSize;
-    this.$node.attr({
-      width: size[0] * scale[0],
-      height: size[1] * scale[1]
-    }).style('transform', 'rotate(' + rotate + 'deg)');
-    this.$node.select('g').attr('transform', 'scale(' + scale[0] + ',' + scale[1] + ')');
+    if ((<Element>this.node).tagName.toLowerCase() === 'svg') {
+      this.$node.attr({
+        width: size[0] * scale[0],
+        height: size[1] * scale[1]
+      }).style('transform', 'rotate(' + rotate + 'deg)');
+      this.$node.select('g').attr('transform', 'scale(' + scale[0] + ',' + scale[1] + ')');
+    } else {
+      this.$node.style('transform', `rotate(${rotate}deg)scale(${scale[0]},${scale[1]})`);
+    }
 
     var new_ = {
       scale: scale,
