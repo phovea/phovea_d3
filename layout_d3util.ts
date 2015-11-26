@@ -5,6 +5,7 @@
 
 import d3 = require('d3');
 import layout = require('../caleydo_core/layout');
+import C = require('../caleydo_core/main');
 import geom = require('../caleydo_core/geom');
 'use strict';
 
@@ -60,36 +61,43 @@ class HTMLLayoutElem extends layout.ALayoutElem implements layout.ILayoutElem {
   }
 
   setBounds(x:number, y:number, w:number, h:number) {
-    var unit = this.layoutOption('unit', 'px'),
+    const unit = this.layoutOption('unit', 'px'),
       doAnimate = this.layoutOption('animate', false) === true;
-    var t : any = doAnimate ? this.$node.transition().duration(this.layoutOption('animation-duration',200)) : this.$node;
+
+    const targetBounds =  geom.rect(x,y,w,h);
+    var extra = this.layoutOption('set-call',null);
+
+    const duration = this.layoutOption('animation-duration',200);
+
+    var t : any = doAnimate && duration > 0? this.$node.transition().duration(duration) : this.$node;
     t.style({
       left : x + unit,
       top : y + unit,
       width: w + unit,
       height: h + unit
     });
-    var extra = this.layoutOption('set-call',null);
     if (extra) {
       t.call(extra);
     }
     extra = this.layoutOption('onSetBounds', null);
     if (doAnimate) {
-      this.targetBounds =  geom.rect(x,y,w,h);
+      this.targetBounds = targetBounds;
+      //the transition.end event didn't work in all cases
       var d : Promise<void> = new Promise<void>((resolve) => {
-        t.each('end', () => {
+        setTimeout(() => {
           this.targetBounds = null;
           if (extra) {
             extra();
           }
           resolve(null);
-        });
+        }, duration);
       });
       return d;
-    } else if (extra) {
-      extra();
-      return Promise.resolve(null);
     }
+    if (extra) {
+      extra();
+    }
+    return Promise.resolve(null);
   }
 
   getBounds() {
