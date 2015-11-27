@@ -5,7 +5,6 @@
 
 import d3 = require('d3');
 import layout = require('../caleydo_core/layout');
-import C = require('../caleydo_core/main');
 import geom = require('../caleydo_core/geom');
 'use strict';
 
