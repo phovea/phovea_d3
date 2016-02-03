@@ -129,6 +129,7 @@ export class DropDataItemHandler extends events.EventHandler {
       var e = d3.event;
       var xy = d3.mouse($node.node());
       if (this.checkType(e)) {
+        e.preventDefault();
         this.fire('enter', {x: xy[0], y: xy[1]});
         return false;
       }
