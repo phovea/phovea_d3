@@ -10,10 +10,11 @@ import d3 = require('d3');
  * D3 implementation of the ajax adapter
  */
 class D3Adapter implements ajax.IAjaxAdapter {
+
   send(url: string, data: any = {}, method = 'get', expectedDataType = 'json'): Promise<any> {
     return new Promise((resolve, reject) => {
       if (method === 'get' || method === 'head') {
-        data = ajax.encodeParams(data);
+        data = ajax.encodeParams(data); //encode in url
         if (data) {
           url += (/\?/.test(url) ? '&' : '?') + data;
         }

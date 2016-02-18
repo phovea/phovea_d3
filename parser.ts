@@ -50,6 +50,14 @@ export function parseMatrix(data:any[][]): matrix.IMatrix;
 export function parseMatrix(data:any[][], options:any): matrix.IMatrix;
 export function parseMatrix(data:any[][], rows: string[], cols: string[]): matrix.IMatrix;
 export function parseMatrix(data:any[][], rows: string[], cols: string[], options:any): matrix.IMatrix;
+/**
+ * parses a given dataset and convert is to a matrix
+ * @param data the data array
+ * @param rows_or_options see options or the row ids of this matrix
+ * @param cols_def the optional column ids
+ * @param options options for defining the dataset description
+ * @returns {matrix.IMatrix}
+ */
 export function parseMatrix(data:any[][], rows_or_options?: any, cols_def?: string[], options: any = {}): matrix.IMatrix {
     const rows = Array.isArray(rows_or_options) ? <string[]>rows_or_options : data.map((r) => r[0]);
     const cols = cols_def ? cols_def : data[0].slice(1);
