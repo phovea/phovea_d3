@@ -59,8 +59,8 @@ export function parseMatrix(data:any[][], rows: string[], cols: string[], option
  * @returns {matrix.IMatrix}
  */
 export function parseMatrix(data:any[][], rows_or_options?: any, cols_def?: string[], options: any = {}): matrix.IMatrix {
+    const cols = cols_def ? cols_def : data.shift().slice(1);
     const rows = Array.isArray(rows_or_options) ? <string[]>rows_or_options : data.map((r) => r[0]);
-    const cols = cols_def ? cols_def : data[0].slice(1);
     if (typeof rows_or_options === 'object') {
         options = rows_or_options;
     }
@@ -82,10 +82,12 @@ export function parseMatrix(data:any[][], rows_or_options?: any, cols_def?: stri
 
     const ddesc : any = localdesc;
     ddesc.size = ddesc.size || [rows.length, cols.length];
-    var realdata = Array.isArray(rows_or_options) ? data : data.slice(1).map((r) => r.slice(1));
+    var realdata = Array.isArray(rows_or_options) ? data : data.map((r) => r.slice(1));
     ddesc.value = ddesc.value || guessValue([].concat.apply([],realdata));
     if (ddesc.value.type === 'real') {
         realdata = realdata.map((row) => row.map(parseFloat));
+    } else if (ddesc.value.type === 'int') {
+      realdata = realdata.map((row) => row.map(parseInt));
     }
     const loader = {
         rowIds: (desc:datatypes.IDataDescription, range:ranges.Range) => Promise.resolve(localdesc.rowassigner(range.filter(rows))),
