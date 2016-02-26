@@ -42,14 +42,14 @@ export class SelectionIDType {
     }
 
     this.$div.classed('no-selection-' + type, selection.isNone);
-    var elem = this.$ul.select('span.select-'+type);
+    var elem = this.$ul.select('span.caleydo-select-'+type);
     if (selection.isNone) {
       elem.remove();
       return;
     }
 
     if (elem.empty()) {
-      elem = this.$ul.append('span').classed('select-'+type,true);
+      elem = this.$ul.append('span').classed('caleydo-select-'+type,true);
     }
     if (this.options.useNames && this.idType.id.charAt(0) !== '_' && !this.idType.internal) {
       this.idType.unmap(selection).then((names) => {

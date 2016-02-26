@@ -134,7 +134,7 @@ export function createItemRep(context: link.IBandContext, a: link.IVisWrapper, a
       var lb = geom.wrap(locb[i]);
       if (la && lb) {
         r.push({
-          clazz: 'rel-item' + (selections.contains(id) ? ' select-selected' : ''),
+          clazz: 'rel-item' + (selections.contains(id) ? ' caleydo-select-selected' : ''),
           id: id,
           d: context.line([toPoint(la, lb, amulti), toPoint(lb, la, bmulti)])
         });

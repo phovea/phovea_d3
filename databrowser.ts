@@ -34,7 +34,7 @@ export class DataBrowser extends events.EventHandler {
   }
 
   private buildTree(parent: Element) {
-    const $node = d3.select(parent).append('ul').classed('databrowser', true).classed('fa-ul', true);
+    const $node = d3.select(parent).append('ul').classed('caleydo-databrowser', true).classed('fa-ul', true);
     const that = this;
 
     function buildLevel($level) {
@@ -90,7 +90,7 @@ export class DataBrowser extends events.EventHandler {
   }
 
   private buildList(parent: Element) {
-    const $node = d3.select(parent).append('ul').classed('databrowser', true).classed('fa-ul', true);
+    const $node = d3.select(parent).append('ul').classed('caleydo-databrowser', true).classed('fa-ul', true);
     data.list(this.options.filter).then((list: datatypes.IDataType[]) => {
       const $li = $node.selectAll('li').data(list);
       const $li_enter = $li.enter().append('li').append('span')

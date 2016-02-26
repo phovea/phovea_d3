@@ -8,7 +8,7 @@ import d3 = require('d3');
 
 
 function getTooltip() {
-  var t = d3.select('body > div.tooltip');
+  var t = d3.select('body > div.caleydo-tooltip');
   if (t.empty()) {
     t = d3.select('body').append('div')
       .attr('class', 'tooltip')

@@ -144,7 +144,7 @@ export class LinksRenderer {
           }
         });
         var $links = $g.selectAll('path').data(links);
-        $links.enter().append('path').attr('class','select-selected');
+        $links.enter().append('path').attr('class','caleydo-select-selected');
         $links.exit().remove();
         $links.attr('d', (d) => {
           return line(d);

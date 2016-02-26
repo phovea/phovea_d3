@@ -27,10 +27,10 @@ export function transform(x = 0, y = 0, rotate = 0, scaleX = 1, scaleY = 1) {
 export function selectionUtil(data: datatype.IDataType, $data : d3.Selection<any>, selector : string) {
   var l = function (event, type, selected) {
     var all = $data.selectAll(selector);
-    all.classed('select-' + type, false);
+    all.classed('caleydo-select-' + type, false);
     var sub = selected.filter(all[0]);
     if (sub.length > 0) {
-      d3.selectAll(sub).classed('select-' + type, true);
+      d3.selectAll(sub).classed('caleydo-select-' + type, true);
     }
   };
   data.on('select', l);
