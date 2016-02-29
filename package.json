@@ -13,6 +13,35 @@
           "type": "ajax-adapter",
           "id": "caleydo_adapter_d3",
           "file": "ajax_adapter_d3"
+        },
+        {
+          "type": "autoload",
+          "id": "caleydo_links",
+          "file": "link_renderer"
+        },
+        {
+          "type": "link-representation",
+          "id": "link-block",
+          "file": "link_representation",
+          "name": "Block Link Representation",
+          "factory": "createBlockRep",
+          "granularity": 0
+        },
+        {
+          "type": "link-representation",
+          "id": "link-group",
+          "file": "link_representation",
+          "name": "Group Link Representation",
+          "factory": "createGroupRep",
+          "granularity": 5
+        },
+        {
+          "type": "link-representation",
+          "id": "link-item",
+          "file": "link_representation",
+          "name": "Item Link Representation",
+          "factory": "createItemRep",
+          "granularity": 10
         }
       ]
     },
