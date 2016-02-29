@@ -73,7 +73,7 @@ export class SelectionInfo {
   private $div : d3.Selection<any>;
   private handler : SelectionIDType[] = [];
   private listener = (event, idtype) => {
-    if (this.options.filter(idtype)) {
+    if (idtype instanceof idtypes.IDType && this.options.filter(idtype)) {
       this.handler.push(new SelectionIDType(idtype, this.$div, this.options));
     }
   };
