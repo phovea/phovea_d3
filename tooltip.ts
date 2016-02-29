@@ -11,7 +11,7 @@ function getTooltip() {
   var t = d3.select('body > div.caleydo-tooltip');
   if (t.empty()) {
     t = d3.select('body').append('div')
-      .attr('class', 'tooltip')
+      .attr('class', 'caleydo-tooltip')
       .style('display', 'block')
       .style('opacity', 0);
   }
