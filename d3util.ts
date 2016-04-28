@@ -8,7 +8,6 @@ import datatype = require('../caleydo_core/datatype');
 import vis = require('../caleydo_core/vis');
 import geom = require('../caleydo_core/geom');
 import d3 = require('d3');
-'use strict';
 
 export function transform(x = 0, y = 0, rotate = 0, scaleX = 1, scaleY = 1) {
   var t= d3.transform('');

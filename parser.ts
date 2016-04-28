@@ -11,7 +11,6 @@ import matrix_impl = require('../caleydo_core/matrix_impl');
 import table = require('../caleydo_core/table');
 import table_impl = require('../caleydo_core/table_impl');
 import idtypes = require('../caleydo_core/idtype');
-'use strict';
 
 export function parseRemoteMatrix(url: string, options: any = {}): Promise<matrix.IMatrix> {
     return new Promise((resolve, reject) => {

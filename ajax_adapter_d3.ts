@@ -4,7 +4,6 @@
 /// <reference path="../../tsd.d.ts" />
 import ajax = require('../caleydo_core/ajax');
 import d3 = require('d3');
-'use strict';
 
 /**
  * D3 implementation of the ajax adapter

@@ -6,7 +6,6 @@
 import d3 = require('d3');
 import layout = require('../caleydo_core/layout');
 import geom = require('../caleydo_core/geom');
-'use strict';
 
 class SVGTransformLayoutElem extends layout.ALayoutElem implements layout.ILayoutElem {
   constructor(private $elem: d3.Selection<any>, private rawWidth: number, private rawHeight: number, options:any = {}) {
