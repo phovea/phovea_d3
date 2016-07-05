@@ -30,8 +30,8 @@ export function bind<T>(toLabel:((d:T, i:number)=>string) | string, delay = 200)
     selection.on('mouseenter.tooltip', function (d:T, i) {
         const tooltip = getTooltip();
         tooltip.html(labelfor.call(this, d, i))
-          .style('left', (d3.event.pageX + 5) + 'px')
-          .style('top', (d3.event.pageY - 28) + 'px');
+          .style('left', ((<MouseEvent>d3.event).pageX + 5) + 'px')
+          .style('top', ((<MouseEvent>d3.event).pageY - 28) + 'px');
         tooltip.style('display', 'block').interrupt().transition()
           .delay(delay)
           .duration(200)

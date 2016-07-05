@@ -266,25 +266,28 @@ class Link {
   private render(links : ILink[], $g: d3.Selection<any>) {
     const $links = $g.selectAll('path').data(links, (d) => d.id);
     const $links_enter = $links.enter().append('path').on('click', (link) => {
+      let e = <Event>d3.event;
       if (link.range && this.options.canSelect()) {
         this.idtype.select(link.range, idtypes.toSelectOperation(d3.event));
       }
-      d3.event.preventDefault();
-      d3.event.stopPropagation();
+      e.preventDefault();
+      e.stopPropagation();
     });
     if (this.options.hover) {
       $links_enter.on('mouseenter', (link) => {
+        let e = <Event>d3.event;
         if (link.range && this.options.canHover()) {
         this.idtype.select(idtypes.hoverSelectionType, link.range);
         }
-        d3.event.preventDefault();
-        d3.event.stopPropagation();
+        e.preventDefault();
+        e.stopPropagation();
       }).on('mouseleave', (link) => {
+        let e = <Event>d3.event;
         if (link.range && this.options.canHover()) {
           this.idtype.clear(idtypes.hoverSelectionType);
         }
-        d3.event.preventDefault();
-        d3.event.stopPropagation();
+        e.preventDefault();
+        e.stopPropagation();
       });
     }
 
@@ -295,8 +298,9 @@ class Link {
     });
     if (this.options.interactive !== false) {
       $g.select('path.rel-back').on('contextmenu', () => {
+        let e = <Event>d3.event;
         this.nextMode($g);
-        d3.event.preventDefault();
+        e.preventDefault();
       });
     }
   }

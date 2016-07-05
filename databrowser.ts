@@ -126,7 +126,7 @@ export class DropDataItemHandler extends events.EventHandler {
 
   private register($node:d3.Selection<any>) {
     $node.on('dragenter', () => {
-      var e = d3.event;
+      var e = <Event>d3.event;
       var xy = d3.mouse($node.node());
       if (this.checkType(e)) {
         e.preventDefault();
@@ -134,7 +134,7 @@ export class DropDataItemHandler extends events.EventHandler {
         return false;
       }
     }).on('dragover', () => {
-      var e = d3.event;
+      var e = <Event>d3.event;
       var xy = d3.mouse($node.node());
       if (this.checkType(e)) {
         e.preventDefault();
