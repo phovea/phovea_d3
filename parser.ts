@@ -58,7 +58,7 @@ export function parseMatrix(data:any[][], rows: string[], cols: string[], option
  * @returns {matrix.IMatrix}
  */
 export function parseMatrix(data:any[][], rows_or_options?: any, cols_def?: string[], options: any = {}): matrix.IMatrix {
-    const cols = cols_def ? cols_def : data.shift().slice(1);
+    const cols = cols_def ? cols_def : data.slice().shift().slice(1);
     const rows = Array.isArray(rows_or_options) ? <string[]>rows_or_options : data.map((r) => r[0]);
     if (typeof rows_or_options === 'object') {
         options = rows_or_options;
