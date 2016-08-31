@@ -1,13 +1,35 @@
-Caleydo D3 Plugins
+Caleydo D3 ![Caleydo Web Client Plugin](https://img.shields.io/badge/Caleydo%20Web-Client%20Plugin-F47D20.svg)
 ==================
 
-## Selectioninfo
+This plugin provides several D3 modules and applications, such as: selection info, data browser, visual links between views.
 
-## Databrowser
+Installation
+------------
+```bash
+./manage.sh clone Caleydo/caleydo_d3
+./manage.sh resolve
+```
+
+If you want this plugin to be dynamically resolved as part of another application of plugin, you need to add it as a peer dependency to the _package.json_ of the application or plugin it should belong to:
+
+```bash
+{
+  "peerDependencies": {
+    "caleydo_d3": "*"
+  }
+}
+```
+
+Usage
+------------
+
+### Selectioninfo
+
+### Databrowser
 
 Provides easy-to-setup browsing capabilities for caleydo-data.
 
-### Add to your app
+#### Add to your app
 
 import module in your main.ts:
 ```javascript
@@ -24,7 +46,7 @@ Create the databrowser in your main.ts:
 databrowser.create(document.getElementById('databrowser'));
 ```
 
-### Options
+#### Options
 
 ```javascript
 databrowser.create(document.getElementById('databrowser'), {
@@ -45,4 +67,7 @@ databrowser.create(document.getElementById('databrowser'), {
 
 
 
+***
 
+<a href="https://caleydo.org"><img src="http://caleydo.org/assets/images/logos/caleydo.svg" align="left" width="200px" hspace="10" vspace="6"></a>
+This repository is part of **[Caleydo Web](http://caleydo.org/)**, a platform for developing web-based visualization applications. For tutorials, API docs, and more information about the build and deployment process, see the [documentation page](http://caleydo.org/documentation/).
