@@ -1,18 +1,17 @@
 /**
  * Created by Samuel Gratzl on 24.10.2015.
  */
-
-import * as C from 'phovea_core/src/index';
 import * as d3 from 'd3';
-import * as datatypes from 'phovea_core/src/datatype';
-import * as ranges from 'phovea_core/src/range';
-import * as matrix from 'phovea_core/src/matrix';
-import * as matrix_impl from 'phovea_core/src/matrix_impl';
-import * as table from 'phovea_core/src/table';
-import * as table_impl from 'phovea_core/src/table_impl';
-import * as idtypes from 'phovea_core/src/idtype';
+import {uniqueString, mixin} from 'phovea_core/src';
+import {IDataDescription} from 'phovea_core/src/datatype';
+import {Range, join} from 'phovea_core/src/range';
+import {IMatrix} from 'phovea_core/src/matrix';
+import {create as createMatrix} from 'phovea_core/src/matrix_impl';
+import {ITable} from 'phovea_core/src/table';
+import {create as createTable} from 'phovea_core/src/table_impl';
+import {createLocalAssigner} from 'phovea_core/src/idtype';
 
-export function parseRemoteMatrix(url: string, options: any = {}): Promise<matrix.IMatrix> {
+export function parseRemoteMatrix(url: string, options: any = {}): Promise<IMatrix> {
     return new Promise((resolve, reject) => {
         d3.text(url, (error, data)  => {
             if (error) {
@@ -45,19 +44,19 @@ function guessValue(arr: any[]) : any {
 }
 
 
-export function parseMatrix(data:any[][]): matrix.IMatrix;
-export function parseMatrix(data:any[][], options:any): matrix.IMatrix;
-export function parseMatrix(data:any[][], rows: string[], cols: string[]): matrix.IMatrix;
-export function parseMatrix(data:any[][], rows: string[], cols: string[], options:any): matrix.IMatrix;
+export function parseMatrix(data:any[][]): IMatrix;
+export function parseMatrix(data:any[][], options:any): IMatrix;
+export function parseMatrix(data:any[][], rows: string[], cols: string[]): IMatrix;
+export function parseMatrix(data:any[][], rows: string[], cols: string[], options:any): IMatrix;
 /**
  * parses a given dataset and convert is to a matrix
  * @param data the data array
  * @param rows_or_options see options or the row ids of this matrix
  * @param cols_def the optional column ids
  * @param options options for defining the dataset description
- * @returns {matrix.IMatrix}
+ * @returns {IMatrix}
  */
-export function parseMatrix(data:any[][], rows_or_options?: any, cols_def?: string[], options: any = {}): matrix.IMatrix {
+export function parseMatrix(data:any[][], rows_or_options?: any, cols_def?: string[], options: any = {}): IMatrix {
     const cols = cols_def ? cols_def : data.slice().shift().slice(1);
     const rows = Array.isArray(rows_or_options) ? <string[]>rows_or_options : data.map((r) => r[0]).slice(1);
     if (typeof rows_or_options === 'object') {
@@ -65,7 +64,7 @@ export function parseMatrix(data:any[][], rows_or_options?: any, cols_def?: stri
     }
     options = options || {};
 
-    const id = C.uniqueString('localData');
+    const id = uniqueString('localData');
     var localdesc = {
         type: 'matrix',
         id: id,
@@ -73,10 +72,10 @@ export function parseMatrix(data:any[][], rows_or_options?: any, cols_def?: stri
         fqname: id,
         rowtype: '_rows',
         coltype: '_cols',
-        rowassigner: idtypes.createLocalAssigner(),
-        colassigner: idtypes.createLocalAssigner()
+        rowassigner: createLocalAssigner(),
+        colassigner: createLocalAssigner()
     };
-    C.mixin(localdesc, options);
+    mixin(localdesc, options);
 
 
     const ddesc : any = localdesc;
@@ -89,24 +88,24 @@ export function parseMatrix(data:any[][], rows_or_options?: any, cols_def?: stri
       realdata = realdata.map((row) => row.map(parseInt));
     }
     const loader = {
-        rowIds: (desc:datatypes.IDataDescription, range:ranges.Range) => Promise.resolve(localdesc.rowassigner(range.filter(rows))),
-        colIds: (desc:datatypes.IDataDescription, range:ranges.Range) => Promise.resolve(localdesc.rowassigner(range.filter(cols))),
-        ids: (desc:datatypes.IDataDescription, range:ranges.Range) => {
+        rowIds: (desc:IDataDescription, range:Range) => Promise.resolve(localdesc.rowassigner(range.filter(rows))),
+        colIds: (desc:IDataDescription, range:Range) => Promise.resolve(localdesc.rowassigner(range.filter(cols))),
+        ids: (desc:IDataDescription, range:Range) => {
             const rc = localdesc.rowassigner(range.dim(0).filter(rows));
             const cc = localdesc.colassigner(range.dim(1).filter(cols));
-            return Promise.resolve(ranges.join(rc, cc));
+            return Promise.resolve(join(rc, cc));
         },
-        at: (desc:datatypes.IDataDescription, i, j) => Promise.resolve(realdata[i][j]),
-        rows: (desc:datatypes.IDataDescription, range:ranges.Range) => Promise.resolve(range.filter(rows)),
-        cols: (desc:datatypes.IDataDescription, range:ranges.Range) => Promise.resolve(range.filter(cols)),
-        data: (desc:datatypes.IDataDescription, range:ranges.Range) => Promise.resolve(range.filter(realdata))
+        at: (desc:IDataDescription, i, j) => Promise.resolve(realdata[i][j]),
+        rows: (desc:IDataDescription, range:Range) => Promise.resolve(range.filter(rows)),
+        cols: (desc:IDataDescription, range:Range) => Promise.resolve(range.filter(cols)),
+        data: (desc:IDataDescription, range:Range) => Promise.resolve(range.filter(realdata))
     };
 
-    return matrix_impl.create(<datatypes.IDataDescription>(<any>localdesc), loader);
+    return createMatrix(<IDataDescription>(<any>localdesc), loader);
 }
 
 
-export function parseRemoteTable(url: string, options: any = {}): Promise<table.ITable> {
+export function parseRemoteTable(url: string, options: any = {}): Promise<ITable> {
     return new Promise((resolve, reject) => {
         d3.csv(url, (error, data)  => {
             if (error) {
@@ -125,17 +124,17 @@ function to_objects(data: any[][], cols: string[]) {
     });
 }
 
-export function parseTable(data:any[][], options:any = {}): table.ITable {
-    const id = C.uniqueString('localData');
+export function parseTable(data:any[][], options:any = {}): ITable {
+    const id = uniqueString('localData');
     var localdesc = {
         type: 'table',
         id: id,
         name: id,
         fqname: id,
         idtype: '_rows',
-        rowassigner: idtypes.createLocalAssigner()
+        rowassigner: createLocalAssigner()
     };
-    C.mixin(localdesc, options);
+    mixin(localdesc, options);
 
     const rows = data.map((r) => r[0]);
     const cols = data[0].slice(1);
@@ -152,7 +151,7 @@ export function parseTable(data:any[][], options:any = {}): table.ITable {
     realdata = realdata.map((row) => ddesc.columns.map((col, i) => (col.value.type === 'real') ? parseFloat(row[i]) : row[i]));
     const objs = to_objects(realdata, cols);
 
-    ddesc.loader = (desc: datatypes.IDataDescription) => {
+    ddesc.loader = (desc: IDataDescription) => {
         const r = {
             rowIds: localdesc.rowassigner(rows),
             rows: rows,
@@ -161,25 +160,25 @@ export function parseTable(data:any[][], options:any = {}): table.ITable {
         };
         return Promise.resolve(r);
     };
-    return table_impl.create(<any>localdesc);
+    return createTable(<any>localdesc);
 }
 
 function to_list(objs: any[], cols: string[]) {
     return objs.map((obj) => cols.map((c) => obj[c]));
 }
 
-export function parseObjects(data:any[], options:any = {}): table.ITable {
-    const id = C.uniqueString('localData');
+export function parseObjects(data:any[], options:any = {}): ITable {
+    const id = uniqueString('localData');
     var localdesc = {
         type: 'table',
         id: id,
         name: id,
         fqname: id,
         idtype: '_rows',
-        rowassigner: idtypes.createLocalAssigner(),
+        rowassigner: createLocalAssigner(),
         keyProperty: '_id'
     };
-    C.mixin(localdesc, options);
+    mixin(localdesc, options);
 
     const rows = data.map((r,i) => r[localdesc.keyProperty] || i);
     const cols = Object.keys(data[0]);
@@ -196,7 +195,7 @@ export function parseObjects(data:any[], options:any = {}): table.ITable {
       };
     });
 
-    ddesc.loader = (desc: datatypes.IDataDescription) => {
+    ddesc.loader = (desc: IDataDescription) => {
         const r = {
             rowIds: localdesc.rowassigner(rows),
             rows: rows,
@@ -205,5 +204,5 @@ export function parseObjects(data:any[], options:any = {}): table.ITable {
         };
         return Promise.resolve(r);
     };
-    return table_impl.create(<any>localdesc);
+    return createTable(<any>localdesc);
 }

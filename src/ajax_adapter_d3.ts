@@ -1,19 +1,18 @@
 /**
  * Created by Samuel Gratzl on 04.08.2014.
  */
-
-import * as ajax from 'phovea_core/src/ajax';
+import {IAjaxAdapter, encodeParams} from 'phovea_core/src/ajax';
 import * as d3 from 'd3';
 
 /**
  * D3 implementation of the ajax adapter
  */
-class D3Adapter implements ajax.IAjaxAdapter {
+class D3Adapter implements IAjaxAdapter {
 
   send(url: string, data: any = {}, method = 'get', expectedDataType = 'json'): Promise<any> {
     return new Promise((resolve, reject) => {
       if (method === 'get' || method === 'head') {
-        data = ajax.encodeParams(data); //encode in url
+        data = encodeParams(data); //encode in url
         if (data) {
           url += (/\?/.test(url) ? '&' : '?') + data;
         }
@@ -23,7 +22,7 @@ class D3Adapter implements ajax.IAjaxAdapter {
       if (!(data instanceof FormData)) {
         xhr.header('Content-Type','application/x-www-form-urlencoded');
       }
-      xhr.send(method, data instanceof FormData ? data: ajax.encodeParams(data), (error, _raw) => {
+      xhr.send(method, data instanceof FormData ? data: encodeParams(data), (error, _raw) => {
         if (error) {
           reject(error);
         } else {

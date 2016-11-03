@@ -2,28 +2,28 @@
  * Created by Samuel Gratzl on 16.12.2014.
  */
 
-import * as C from 'phovea_core/src/index';
-import * as geom from 'phovea_core/src/geom';
-import * as _2D from 'phovea_core/src/2D';
-import * as events from 'phovea_core/src/event';
-import * as idtypes from 'phovea_core/src/idtype';
-import * as ranges from 'phovea_core/src/range';
-import * as plugins from 'phovea_core/src/plugin';
-import * as vis from 'phovea_core/src/vis';
+import {getter, indexOf,constantTrue,constantFalse, onDOMNodeRemoved, mixin} from 'phovea_core/src';
+import {Rect, polygon, AShape} from 'phovea_core/src/geom';
+import {Vector2D} from 'phovea_core/src/2D';
+import {IEventHandler} from 'phovea_core/src/event';
+import {IDType, defaultSelectionType, hoverSelectionType, toSelectOperation} from 'phovea_core/src/idtype';
+import {Range, Range1D, list as rlist} from 'phovea_core/src/range';
+import {list as listPlugins} from 'phovea_core/src/plugin';
+import {ILocateAble, } from 'phovea_core/src/vis';
 import * as d3 from 'd3';
 
-export interface IDataVis extends events.IEventHandler, vis.ILocateAble {
+export interface IDataVis extends IEventHandler, ILocateAble {
   id: number;
-  location : geom.AShape;
-  range: ranges.Range;
-  ids() : Promise<ranges.Range>;
+  location : AShape;
+  range: Range;
+  ids() : Promise<Range>;
 }
 
-export interface IVisWrapper extends vis.ILocateAble {
+export interface IVisWrapper extends ILocateAble {
   id: number;
-  location: geom.AShape;
-  dimOf(idtype:idtypes.IDType) : number;
-  ids() : Promise<ranges.Range>;
+  location: AShape;
+  dimOf(idtype:IDType) : number;
+  ids() : Promise<Range>;
 }
 
 class VisWrapper implements IVisWrapper {
@@ -53,7 +53,7 @@ class VisWrapper implements IVisWrapper {
     return this.v.location;
   }
 
-  dimOf(idtype : idtypes.IDType) {
+  dimOf(idtype : IDType) {
     if (!this.lookup.has(idtype.id)) {
       return -1;
     }
@@ -72,10 +72,10 @@ class VisWrapper implements IVisWrapper {
     return this.data.idtypes;
   }
 
-  locate(...range: ranges.Range[]): Promise<any> {
+  locate(...range: Range[]): Promise<any> {
     return this.v.locate.apply(this.vis, range);
   }
-  locateById(...range: ranges.Range[]): Promise<any> {
+  locateById(...range: Range[]): Promise<any> {
     return this.v.locateById.apply(this.vis, range);
   }
 
@@ -97,25 +97,25 @@ export interface ILink {
   clazz : string;
   id : string;
   d : string;
-  range: ranges.Range;
+  range: Range;
 }
 
 export interface IBandContext {
   line: d3.svg.Line<any>;
-  idtype: idtypes.IDType;
-  createBand(aBounds: geom.Rect, bBounds: geom.Rect, aIDs: ranges.Range1D, bIDs: ranges.Range1D, union: ranges.Range1D, id: string, clazz : string) : ILink[];
+  idtype: IDType;
+  createBand(aBounds: Rect, bBounds: Rect, aIDs: Range1D, bIDs: Range1D, union: Range1D, id: string, clazz : string) : ILink[];
 }
 
 export interface IBandRepresentation {
-  (context: IBandContext, a: IVisWrapper, aa: geom.Rect, b: IVisWrapper, bb: geom.Rect): Promise<ILink[]>;
+  (context: IBandContext, a: IVisWrapper, aa: Rect, b: IVisWrapper, bb: Rect): Promise<ILink[]>;
 }
 
 
-var lineGlobal = d3.svg.line<_2D.Vector2D>().interpolate('linear-closed').x(C.getter('x')).y(C.getter('y'));
+var lineGlobal = d3.svg.line<Vector2D>().interpolate('linear-closed').x(getter('x')).y(getter('y'));
 
 class Link {
   id : string;
-  constructor(public a : VisWrapper, public b: VisWrapper, private idtype : idtypes.IDType, private all: VisWrapper[], private options : any) {
+  constructor(public a : VisWrapper, public b: VisWrapper, private idtype : IDType, private all: VisWrapper[], private options : any) {
     this.id = toId(a, b);
   }
 
@@ -167,17 +167,17 @@ class Link {
     return lineGlobal;
   }
 
-  createBand(aa: geom.Rect, bb: geom.Rect, ida: ranges.Range1D, idb: ranges.Range1D, union: ranges.Range1D, id: string, clazz : string) {
+  createBand(aa: Rect, bb: Rect, ida: Range1D, idb: Range1D, union: Range1D, id: string, clazz : string) {
     var ul = union.length;
 
-    var l : _2D.Vector2D[] = [aa.corner('ne'), bb.corner('nw')];
+    var l : Vector2D[] = [aa.corner('ne'), bb.corner('nw')];
 
     var r = [];
     function addBlock(ar, br, id, clazz, ashift, bshift) {
       var ll = l.slice();
       //compute the edge vector and scale it by the ratio
-      var a_dir = _2D.Vector2D.fromPoints(l[0], aa.corner('se'));
-      var b_dir = _2D.Vector2D.fromPoints(l[1], bb.corner('sw'));
+      var a_dir = Vector2D.fromPoints(l[0], aa.corner('se'));
+      var b_dir = Vector2D.fromPoints(l[1], bb.corner('sw'));
       ll.push(l[1].add(b_dir.multiply(br)));
       ll.push(l[0].add(a_dir.multiply(ar)));
       if (ashift > 0) {
@@ -190,7 +190,7 @@ class Link {
         clazz: clazz,
         d: lineGlobal.interpolate('linear-closed')(ll),
         id: id,
-        range: ranges.list(union)
+        range: rlist(union)
       });
     }
 
@@ -198,15 +198,15 @@ class Link {
     var s = this.idtype.selections().dim(0);
     var selected = !s.isNone ? union.intersect(s).length : 0;
     if (selected > 0) {
-      addBlock(selected / ida.length, selected / idb.length, id + '-sel', clazz + ' caleydo-select-'+idtypes.defaultSelectionType, 0, 0);
+      addBlock(selected / ida.length, selected / idb.length, id + '-sel', clazz + ' caleydo-select-'+defaultSelectionType, 0, 0);
     }
     addBlock(ul / ida.length, ul / idb.length, id, clazz, selected / ida.length, selected / idb.length);
 
     if (this.options.hover) {
-      s = this.idtype.selections(idtypes.hoverSelectionType).dim(0);
+      s = this.idtype.selections(hoverSelectionType).dim(0);
       let hovered = !s.isNone ? union.intersect(s).length : 0;
       if (hovered > 0) {
-        addBlock(hovered / ida.length, hovered / idb.length, id + '-sel', clazz + ' caleydo-select-'+idtypes.hoverSelectionType, 0, 0);
+        addBlock(hovered / ida.length, hovered / idb.length, id + '-sel', clazz + ' caleydo-select-'+hoverSelectionType, 0, 0);
       }
     }
 
@@ -214,13 +214,13 @@ class Link {
     return r;
   }
 
-  private shouldRender(a: VisWrapper, aa: geom.Rect, b: VisWrapper, bb: geom.Rect) {
+  private shouldRender(a: VisWrapper, aa: Rect, b: VisWrapper, bb: Rect) {
     if (aa.x2 < (bb.x - 10)) {
       //nothing to do
     } else {
       return false;
     }
-    var shape = geom.polygon(aa.corner('ne'), bb.corner('nw'), bb.corner('sw'), aa.corner('se'));
+    var shape = polygon(aa.corner('ne'), bb.corner('nw'), bb.corner('sw'), aa.corner('se'));
     //check if we have an intersection
     return this.all.every((other) => {
       if (other === this.a || other === this.b) { //don't check me
@@ -239,7 +239,7 @@ class Link {
     }
     m = this.options.mode || 1;
     if (typeof m === 'string') {
-      m = 1 + C.indexOf(this.options.reprs, (c: any) => c.id === m);
+      m = 1 + indexOf(this.options.reprs, (c: any) => c.id === m);
     }
     return m;
   }
@@ -268,7 +268,7 @@ class Link {
     const $links_enter = $links.enter().append('path').on('click', (link) => {
       let e = <Event>d3.event;
       if (link.range && this.options.canSelect()) {
-        this.idtype.select(link.range, idtypes.toSelectOperation(d3.event));
+        this.idtype.select(link.range, toSelectOperation(d3.event));
       }
       e.preventDefault();
       e.stopPropagation();
@@ -277,14 +277,14 @@ class Link {
       $links_enter.on('mouseenter', (link) => {
         let e = <Event>d3.event;
         if (link.range && this.options.canHover()) {
-        this.idtype.select(idtypes.hoverSelectionType, link.range);
+        this.idtype.select(hoverSelectionType, link.range);
         }
         e.preventDefault();
         e.stopPropagation();
       }).on('mouseleave', (link) => {
         let e = <Event>d3.event;
         if (link.range && this.options.canHover()) {
-          this.idtype.clear(idtypes.hoverSelectionType);
+          this.idtype.clear(hoverSelectionType);
         }
         e.preventDefault();
         e.stopPropagation();
@@ -308,12 +308,12 @@ class Link {
 }
 
 class LinkIDTypeContainer {
-  private listener = (event, type:string, selected: ranges.Range, added: ranges.Range, removed: ranges.Range) => this.selectionUpdate(type, selected, added, removed);
+  private listener = (event, type:string, selected: Range, added: Range, removed: Range) => this.selectionUpdate(type, selected, added, removed);
   private change = (elem: VisWrapper) => this.changed(elem);
   private arr : VisWrapper[] = [];
   private $node : d3.Selection<any>;
 
-  constructor(public idtype: idtypes.IDType, private parent: Element, private options: any = {}) {
+  constructor(public idtype: IDType, private parent: Element, private options: any = {}) {
     idtype.on('select', this.listener);
     this.$node = d3.select(parent).append('svg');
     this.$node.style({
@@ -322,10 +322,10 @@ class LinkIDTypeContainer {
       opacity: 1
     });
     this.$node.append('g');
-    C.onDOMNodeRemoved(<Element>this.$node.node(), this.destroy, this);
+    onDOMNodeRemoved(<Element>this.$node.node(), this.destroy, this);
   }
 
-  private selectionUpdate(type:string, selected: ranges.Range, added: ranges.Range, removed: ranges.Range) {
+  private selectionUpdate(type:string, selected: Range, added: Range, removed: Range) {
     //TODO
     this.renderAll();
   }
@@ -381,7 +381,7 @@ class LinkIDTypeContainer {
     var $root = this.$node.select('g');
     var combinations = [];
     var l = this.arr.length, i, j, a,b,
-      filter = this.options.filter || C.constantTrue;
+      filter = this.options.filter || constantTrue;
     for (i = 0; i < l; ++i) {
       a = this.arr[i];
       for (j = 0; j < i; ++j) {
@@ -448,7 +448,7 @@ class LinkIDTypeContainer {
   }
 
   push(elem: VisWrapper, triggerUpdate = true) {
-    var idtypes = elem.idtypes;
+    const idtypes = elem.idtypes;
     if (idtypes.indexOf(this.idtype) >= 0) {
       this.arr.push(elem);
       elem.callbacks.push(this.change);
@@ -479,21 +479,21 @@ export class LinkContainer {
   private links : LinkIDTypeContainer[] = [];
 
   private options = {
-    reprs : plugins.list('link-representation').sort((a: any, b: any) => b.granularity - a.granularity),
+    reprs : listPlugins('link-representation').sort((a: any, b: any) => b.granularity - a.granularity),
     animate: true,
     duration: 100,
-    filter: C.constantTrue,
-    idTypeFilter : <(idtype: idtypes.IDType, i: number, dataVis: IDataVis) => boolean>C.constantTrue,
+    filter: constantTrue,
+    idTypeFilter : <(idtype: IDType, i: number, dataVis: IDataVis) => boolean>constantTrue,
     hover : false,
-    canSelect : C.constantTrue,
-    canHover: C.constantFalse
+    canSelect : constantTrue,
+    canHover: constantFalse
   };
 
   constructor(private parent: Element, private dirtyEvents: string[], options : any = {}) {
     parent.appendChild(this.node);
     this.node.classList.add('link-container');
-    C.onDOMNodeRemoved(this.node, this.destroy, this);
-    C.mixin(this.options, options);
+    onDOMNodeRemoved(this.node, this.destroy, this);
+    mixin(this.options, options);
   }
 
   hide() {
@@ -543,7 +543,7 @@ export class LinkContainer {
     if (typeof arg !== 'boolean') {
       elem = <IDataVis>arg;
     }
-    var index = C.indexOf(this.arr, (w) => w.vis === elem);
+    var index = indexOf(this.arr, (w) => w.vis === elem);
     if (index < 0) {
       return false;
     }

@@ -2,16 +2,16 @@
  * Created by sam on 16.02.2015.
  */
 
-import * as link from './link';
-import * as geom from 'phovea_core/src/geom';
-import * as ranges from 'phovea_core/src/range';
+import {IBandContext, IVisWrapper, ILink} from './link';
+import {wrap, AShape, Rect} from 'phovea_core/src/geom';
+import {all, Range1D, asUngrouped, CompositeRange1D, Range1DGroup} from 'phovea_core/src/range';
 
-export function createBlockRep(context: link.IBandContext, a: link.IVisWrapper, aa: geom.Rect, b: link.IVisWrapper, bb: geom.Rect):Promise<link.ILink[]> {
+export function createBlockRep(context: IBandContext, a: IVisWrapper, aa: Rect, b: IVisWrapper, bb: Rect):Promise<ILink[]> {
   var adim = a.dimOf(context.idtype),
     bdim = b.dimOf(context.idtype);
   return Promise.all([a.ids(), b.ids()]).then((ids) => {
-    var ida:ranges.Range1D = ids[0].dim(adim);
-    var idb:ranges.Range1D = ids[1].dim(bdim);
+    var ida:Range1D = ids[0].dim(adim);
+    var idb:Range1D = ids[1].dim(bdim);
     return context.createBand(aa, bb, ida, idb, ida.intersect(idb), 'block', 'rel-block');
   });
 }
@@ -23,27 +23,27 @@ function toArray(a : any) {
   return a;
 }
 
-export function createGroupRep(context: link.IBandContext, a: link.IVisWrapper, aa: geom.Rect, b: link.IVisWrapper, bb: geom.Rect):Promise<link.ILink[]> {
+export function createGroupRep(context: IBandContext, a: IVisWrapper, aa: Rect, b: IVisWrapper, bb: Rect):Promise<ILink[]> {
   var adim = a.dimOf(context.idtype),
     bdim = b.dimOf(context.idtype);
   function toGroups(ids) {
-    if (ids instanceof ranges.CompositeRange1D) {
-      return (<ranges.CompositeRange1D>ids).groups;
+    if (ids instanceof CompositeRange1D) {
+      return (<CompositeRange1D>ids).groups;
     } else {
-      return [ranges.asUngrouped(ids)];
+      return [asUngrouped(ids)];
     }
   }
   return Promise.all([a.ids(), b.ids()]).then((ids) => {
-    var groupa : ranges.Range1DGroup[] = toGroups(ids[0].dim(adim));
-    var groupb : ranges.Range1DGroup[] = toGroups(ids[1].dim(bdim));
+    var groupa : Range1DGroup[] = toGroups(ids[0].dim(adim));
+    var groupb : Range1DGroup[] = toGroups(ids[1].dim(bdim));
 
     var ars = groupa.map((group) => {
-      var r = ranges.all();
+      var r = all();
       r.dims[adim] = group;
       return r;
     });
     var brs = groupb.map((group) => {
-      var r = ranges.all();
+      var r = all();
       r.dims[bdim] = group;
       return r;
     });
@@ -82,7 +82,7 @@ export function createGroupRep(context: link.IBandContext, a: link.IVisWrapper, 
   });
 }
 
-function selectCorners(a: geom.AShape, b: geom.AShape) {
+function selectCorners(a: AShape, b: AShape) {
   var ac = a.aabb(),
     bc = b.aabb();
   if (ac.cx > bc.cx) {
@@ -94,7 +94,7 @@ function selectCorners(a: geom.AShape, b: geom.AShape) {
 }
 
 
-export function createItemRep(context: link.IBandContext, a: link.IVisWrapper, aa: geom.Rect, b: link.IVisWrapper, bb: geom.Rect):Promise<link.ILink[]> {
+export function createItemRep(context: IBandContext, a: IVisWrapper, aa: Rect, b: IVisWrapper, bb: Rect):Promise<ILink[]> {
   var adim = a.dimOf(context.idtype),
     bdim = b.dimOf(context.idtype),
     amulti = a.data.dim.length > 1,
@@ -108,16 +108,16 @@ export function createItemRep(context: link.IBandContext, a: link.IVisWrapper, a
     return loc.corner(c[0]);
   }
   return Promise.all([a.ids(), b.ids()]).then((ids) => {
-    var ida:ranges.Range1D = ids[0].dim(adim);
-    var idb:ranges.Range1D = ids[1].dim(bdim);
+    var ida:Range1D = ids[0].dim(adim);
+    var idb:Range1D = ids[1].dim(bdim);
     var union = ida.intersect(idb);
     var ars = [], brs = [];
     union.forEach((index) => {
-      var r = ranges.all();
+      var r = all();
       r.dim(adim).setList([index]);
       ars.push(r);
 
-      r = ranges.all();
+      r = all();
       r.dim(bdim).setList([index]);
       brs.push(r);
     });
@@ -130,8 +130,8 @@ export function createItemRep(context: link.IBandContext, a: link.IVisWrapper, a
     context.line.interpolate('linear');
     var selections = context.idtype.selections().dim(0);
     union.forEach((id, i) => {
-      var la = geom.wrap(loca[i]);
-      var lb = geom.wrap(locb[i]);
+      var la = wrap(loca[i]);
+      var lb = wrap(locb[i]);
       if (la && lb) {
         r.push({
           clazz: 'rel-item' + (selections.contains(id) ? ' caleydo-select-selected' : ''),

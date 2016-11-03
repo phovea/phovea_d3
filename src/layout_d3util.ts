@@ -1,13 +1,11 @@
 /**
  * Created by sam on 04.02.2015.
  */
-
-
 import * as d3 from 'd3';
-import * as layout from 'phovea_core/src/layout';
-import * as geom from 'phovea_core/src/geom';
+import {ILayoutElem, ALayoutElem} from 'phovea_core/src/layout';
+import {rect, Rect} from 'phovea_core/src/geom';
 
-class SVGTransformLayoutElem extends layout.ALayoutElem implements layout.ILayoutElem {
+class SVGTransformLayoutElem extends ALayoutElem implements ILayoutElem {
   constructor(private $elem: d3.Selection<any>, private rawWidth: number, private rawHeight: number, options:any = {}) {
     super(options);
   }
@@ -24,11 +22,11 @@ class SVGTransformLayoutElem extends layout.ALayoutElem implements layout.ILayou
 
   getBounds() {
     var t = d3.transform(this.$elem.attr('transform'));
-    return geom.rect(t.translate[0], t.translate[1], this.rawWidth * t.scale[0], this.rawHeight * t.scale[1]);
+    return rect(t.translate[0], t.translate[1], this.rawWidth * t.scale[0], this.rawHeight * t.scale[1]);
   }
 }
 
-class SVGRectLayoutElem extends layout.ALayoutElem implements layout.ILayoutElem {
+class SVGRectLayoutElem extends ALayoutElem implements ILayoutElem {
   constructor(private $elem: d3.Selection<any>, options:any = {}) {
     super(options);
   }
@@ -44,14 +42,14 @@ class SVGRectLayoutElem extends layout.ALayoutElem implements layout.ILayoutElem
   }
 
   getBounds() {
-    return geom.rect(parseFloat(this.$elem.attr('x')), parseFloat(this.$elem.attr('y')), parseFloat(this.$elem.attr('width')), parseFloat(this.$elem.attr('height')));
+    return rect(parseFloat(this.$elem.attr('x')), parseFloat(this.$elem.attr('y')), parseFloat(this.$elem.attr('width')), parseFloat(this.$elem.attr('height')));
   }
 }
 
 
-class HTMLLayoutElem extends layout.ALayoutElem implements layout.ILayoutElem {
+class HTMLLayoutElem extends ALayoutElem implements ILayoutElem {
   private $node : d3.Selection<any>;
-  private targetBounds : geom.Rect = null;
+  private targetBounds : Rect = null;
 
   constructor(node:HTMLElement, options:any = {}) {
     super(options);
@@ -62,7 +60,7 @@ class HTMLLayoutElem extends layout.ALayoutElem implements layout.ILayoutElem {
     const unit = this.layoutOption('unit', 'px'),
       doAnimate = this.layoutOption('animate', false) === true;
 
-    const targetBounds =  geom.rect(x,y,w,h);
+    const targetBounds =  rect(x,y,w,h);
     var extra = this.layoutOption('set-call',null);
 
     const duration = this.layoutOption('animation-duration',200);
@@ -111,7 +109,7 @@ class HTMLLayoutElem extends layout.ALayoutElem implements layout.ILayoutElem {
       }
       return 0;
     }
-    return geom.rect(v(style.left),v(style.top), v(style.width),v(style.height));
+    return rect(v(style.left),v(style.top), v(style.width),v(style.height));
   }
 }
 

@@ -3,22 +3,21 @@
  */
 
 import './style.scss';
-
 import * as d3 from 'd3';
-import * as C from 'phovea_core/src/index';
-import * as data from 'phovea_core/src/data';
-import * as events from 'phovea_core/src/event';
-import * as datatypes from 'phovea_core/src/datatype';
+import {identity, hasDnDType,updateDropEffect, mixin, constantTrue} from 'phovea_core/src';
+import {list as listData, tree as treeData, get as getData} from 'phovea_core/src/data';
+import {EventHandler} from 'phovea_core/src/event';
+import {IDataType} from 'phovea_core/src/datatype';
 
-export class DataBrowser extends events.EventHandler {
+export class DataBrowser extends EventHandler {
   private $node:d3.Selection<any>;
 
   constructor(private parent:Element, private options:any = {}) {
     super();
-    this.options = C.mixin({
+    this.options = mixin({
       layout: 'tree',
       draggable: true,
-      filter: C.constantTrue
+      filter: constantTrue
     }, options);
 
     this.$node = this.build(parent);
@@ -81,7 +80,7 @@ export class DataBrowser extends events.EventHandler {
       $childs.exit().remove();
     }
 
-    data.tree(this.options.filter).then((root) => {
+    treeData(this.options.filter).then((root) => {
       $node.datum(root);
       buildLevel($node);
     });
@@ -91,7 +90,7 @@ export class DataBrowser extends events.EventHandler {
 
   private buildList(parent: Element) {
     const $node = d3.select(parent).append('ul').classed('caleydo-databrowser', true).classed('fa-ul', true);
-    data.list(this.options.filter).then((list: datatypes.IDataType[]) => {
+    listData(this.options.filter).then((list: IDataType[]) => {
       const $li = $node.selectAll('li').data(list);
       const $li_enter = $li.enter().append('li').append('span')
         .call(makeDraggable);
@@ -106,22 +105,22 @@ export class DataBrowser extends events.EventHandler {
   }
 }
 
-export class DropDataItemHandler extends events.EventHandler {
+export class DropDataItemHandler extends EventHandler {
   private options = {
     types: []
   };
 
-  constructor(elem:Element, private handler?:(d:datatypes.IDataType, op:string, pos:{ x: number, y : number}) => void, options = {}) {
+  constructor(elem:Element, private handler?:(d:IDataType, op:string, pos:{ x: number, y : number}) => void, options = {}) {
     super();
-    C.mixin(this.options, options);
+    mixin(this.options, options);
     this.register(d3.select(elem));
   }
 
   private checkType(e: any) {
     if (this.options.types.length === 0) {
-      return C.hasDnDType(e, 'application/caleydo-data-item');
+      return hasDnDType(e, 'application/caleydo-data-item');
     }
-    return this.options.types.some((t) => C.hasDnDType(e, 'application/caleydo-data-'+t));
+    return this.options.types.some((t) => hasDnDType(e, 'application/caleydo-data-'+t));
   }
 
   private register($node:d3.Selection<any>) {
@@ -138,7 +137,7 @@ export class DropDataItemHandler extends events.EventHandler {
       var xy = d3.mouse($node.node());
       if (this.checkType(e)) {
         e.preventDefault();
-        C.updateDropEffect(e);
+        updateDropEffect(e);
         this.fire('over', {x: xy[0], y: xy[1]});
         return false;
       }
@@ -148,9 +147,9 @@ export class DropDataItemHandler extends events.EventHandler {
       var e = <DragEvent>(<any>d3.event);
       e.preventDefault();
       var xy = d3.mouse($node.node());
-      if (C.hasDnDType(e, 'application/caleydo-data-item')) {
+      if (hasDnDType(e, 'application/caleydo-data-item')) {
         var id = JSON.parse(e.dataTransfer.getData('application/caleydo-data-item'));
-        data.get(id).then((d) => {
+        getData(id).then((d) => {
           this.fire('drop', d, e.dataTransfer.dropEffect, {x: xy[0], y: xy[1]});
           if (this.handler) {
             this.handler(d, e.dataTransfer.dropEffect, {x: xy[0], y: xy[1]});
@@ -162,11 +161,11 @@ export class DropDataItemHandler extends events.EventHandler {
   }
 }
 
-export function makeDropable(elem:Element, onDrop?:(d:datatypes.IDataType, op:string, pos:{ x: number, y : number}) => void, options = {}) {
+export function makeDropable(elem:Element, onDrop?:(d:IDataType, op:string, pos:{ x: number, y : number}) => void, options = {}) {
   return new DropDataItemHandler(elem, onDrop, options);
 }
 
-export function makeDraggable<T>(sel:d3.Selection<T>, data_getter: (d:T) => datatypes.IDataType = C.identity) {
+export function makeDraggable<T>(sel:d3.Selection<T>, data_getter: (d:T) => IDataType = identity) {
   sel
     .attr('draggable', true)
     .on('dragstart', function (d) {
