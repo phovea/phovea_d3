@@ -1,16 +1,16 @@
 /**
  * Created by Samuel Gratzl on 24.10.2015.
  */
-/// <reference path="../../tsd.d.ts" />
-import C = require('../caleydo_core/main');
-import d3 = require('d3');
-import datatypes = require('../caleydo_core/datatype');
-import ranges = require('../caleydo_core/range');
-import matrix = require('../caleydo_core/matrix');
-import matrix_impl = require('../caleydo_core/matrix_impl');
-import table = require('../caleydo_core/table');
-import table_impl = require('../caleydo_core/table_impl');
-import idtypes = require('../caleydo_core/idtype');
+
+import * as C from 'phovea_core/src/index';
+import * as d3 from 'd3';
+import * as datatypes from 'phovea_core/src/datatype';
+import * as ranges from 'phovea_core/src/range';
+import * as matrix from 'phovea_core/src/matrix';
+import * as matrix_impl from 'phovea_core/src/matrix_impl';
+import * as table from 'phovea_core/src/table';
+import * as table_impl from 'phovea_core/src/table_impl';
+import * as idtypes from 'phovea_core/src/idtype';
 
 export function parseRemoteMatrix(url: string, options: any = {}): Promise<matrix.IMatrix> {
     return new Promise((resolve, reject) => {

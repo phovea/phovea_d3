@@ -2,13 +2,13 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-/// <amd-dependency path='css!./style' />
+import './style.scss';
 
-import d3 = require('d3');
-import C = require('../caleydo_core/main');
-import data = require('../caleydo_core/data');
-import events = require('../caleydo_core/event');
-import datatypes = require('../caleydo_core/datatype');
+import * as d3 from 'd3';
+import * as C from 'phovea_core/src/index';
+import * as data from 'phovea_core/src/data';
+import * as events from 'phovea_core/src/event';
+import * as datatypes from 'phovea_core/src/datatype';
 
 export class DataBrowser extends events.EventHandler {
   private $node:d3.Selection<any>;

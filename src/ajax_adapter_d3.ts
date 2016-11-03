@@ -1,9 +1,9 @@
 /**
  * Created by Samuel Gratzl on 04.08.2014.
  */
-/// <reference path="../../tsd.d.ts" />
-import ajax = require('../caleydo_core/ajax');
-import d3 = require('d3');
+
+import * as ajax from 'phovea_core/src/ajax';
+import * as d3 from 'd3';
 
 /**
  * D3 implementation of the ajax adapter

@@ -2,9 +2,9 @@
  * Created by Samuel Gratzl on 05.08.2014.
  */
 
-/// <reference path="../../tsd.d.ts" />
-/// <amd-dependency path='css!./style' />
-import d3 = require('d3');
+
+import './style.scss';
+import * as d3 from 'd3';
 
 
 function getTooltip() {

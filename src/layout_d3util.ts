@@ -1,11 +1,11 @@
 /**
  * Created by sam on 04.02.2015.
  */
-/// <reference path="../../tsd.d.ts" />
 
-import d3 = require('d3');
-import layout = require('../caleydo_core/layout');
-import geom = require('../caleydo_core/geom');
+
+import * as d3 from 'd3';
+import * as layout from 'phovea_core/src/layout';
+import * as geom from 'phovea_core/src/geom';
 
 class SVGTransformLayoutElem extends layout.ALayoutElem implements layout.ILayoutElem {
   constructor(private $elem: d3.Selection<any>, private rawWidth: number, private rawHeight: number, options:any = {}) {

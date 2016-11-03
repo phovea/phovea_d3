@@ -2,9 +2,9 @@
  * Created by sam on 16.02.2015.
  */
 
-import link = require('./link');
-import geom = require('../caleydo_core/geom');
-import ranges = require('../caleydo_core/range');
+import * as link from './link';
+import * as geom from 'phovea_core/src/geom';
+import * as ranges from 'phovea_core/src/range';
 
 export function createBlockRep(context: link.IBandContext, a: link.IVisWrapper, aa: geom.Rect, b: link.IVisWrapper, bb: geom.Rect):Promise<link.ILink[]> {
   var adim = a.dimOf(context.idtype),

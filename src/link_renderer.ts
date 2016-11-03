@@ -3,13 +3,13 @@
  */
 /* global define */
 'use strict';
-/// <reference path="../../tsd.d.ts" />
 
-import d3 = require('d3');
-import geom = require('../caleydo_core/geom');
-import ranges = require('../caleydo_core/range');
-import idtypes = require('../caleydo_core/idtype');
-import C = require('../caleydo_core/main');
+
+import * as d3 from 'd3';
+import * as geom from 'phovea_core/src/geom';
+import * as ranges from 'phovea_core/src/range';
+import * as idtypes from 'phovea_core/src/idtype';
+import * as C from 'phovea_core/src/index';
 
 var _id = 0, line = d3.svg.line();
 function nextID() {

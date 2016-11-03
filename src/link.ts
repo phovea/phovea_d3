@@ -2,15 +2,15 @@
  * Created by Samuel Gratzl on 16.12.2014.
  */
 
-import C = require('../caleydo_core/main');
-import geom = require('../caleydo_core/geom');
-import _2D = require('../caleydo_core/2D');
-import events = require('../caleydo_core/event');
-import idtypes = require('../caleydo_core/idtype');
-import ranges = require('../caleydo_core/range');
-import plugins = require('../caleydo_core/plugin');
-import vis = require('../caleydo_core/vis');
-import d3 = require('d3');
+import * as C from 'phovea_core/src/index';
+import * as geom from 'phovea_core/src/geom';
+import * as _2D from 'phovea_core/src/2D';
+import * as events from 'phovea_core/src/event';
+import * as idtypes from 'phovea_core/src/idtype';
+import * as ranges from 'phovea_core/src/range';
+import * as plugins from 'phovea_core/src/plugin';
+import * as vis from 'phovea_core/src/vis';
+import * as d3 from 'd3';
 
 export interface IDataVis extends events.IEventHandler, vis.ILocateAble {
   id: number;

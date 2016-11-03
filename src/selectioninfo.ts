@@ -1,11 +1,11 @@
 /**
  * Created by Samuel Gratzl on 15.12.2014.
  */
-import d3 = require('d3');
-import events = require('../caleydo_core/event');
-import idtypes = require('../caleydo_core/idtype');
-import ranges = require('../caleydo_core/range');
-import C = require('../caleydo_core/main');
+import * as d3 from 'd3';
+import * as events from 'phovea_core/src/event';
+import * as idtypes from 'phovea_core/src/idtype';
+import * as ranges from 'phovea_core/src/range';
+import * as C from 'phovea_core/src/index';
 
 export class SelectionIDType {
   private l = (event, type: string, selection: ranges.Range) => {
