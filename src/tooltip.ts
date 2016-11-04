@@ -2,9 +2,8 @@
  * Created by Samuel Gratzl on 05.08.2014.
  */
 
-/// <reference path="../../tsd.d.ts" />
-/// <amd-dependency path='css!./style' />
-import d3 = require('d3');
+import './style.scss';
+import * as d3 from 'd3';
 
 
 function getTooltip() {
@@ -22,7 +21,7 @@ function getTooltip() {
  * @param toLabel the text to show or a function to determine the text to show
  * @returns {Function}
  */
-export function bind<T>(toLabel:((d:T, i:number)=>string) | string, delay = 200) {
+export default function bind<T>(toLabel:((d:T, i:number)=>string) | string, delay = 200) {
   //wrap as function
   const labelfor:((d:T, i:number)=>string) = <any>d3.functor(toLabel);
 

@@ -1,22 +1,18 @@
 /**
  * Created by Samuel Gratzl on 05.08.2014.
  */
-/* global define */
-'use strict';
-/// <reference path="../../tsd.d.ts" />
-
-import d3 = require('d3');
-import geom = require('../caleydo_core/geom');
-import ranges = require('../caleydo_core/range');
-import idtypes = require('../caleydo_core/idtype');
-import C = require('../caleydo_core/main');
+import * as d3 from 'd3';
+import {AShape} from 'phovea_core/src/geom';
+import {list as rlist} from 'phovea_core/src/range';
+import {IDType} from 'phovea_core/src/idtype';
+import {identity} from 'phovea_core/src';
 
 var _id = 0, line = d3.svg.line();
 function nextID() {
   return _id++;
 }
 
-function selectCorners(a: geom.AShape, b: geom.AShape) {
+function selectCorners(a: AShape, b: AShape) {
   var ac = a.aabb(),
     bc = b.aabb();
   if (ac.cx > bc.cx) {
@@ -45,7 +41,7 @@ export class LinksRenderer {
     });
   }
 
-  register(idtype: idtypes.IDType) {
+  register(idtype: IDType) {
     var that = this;
     function l() {
       that.update(idtype);
@@ -79,7 +75,7 @@ export class LinksRenderer {
     this.visses.push(vis);
     var observing = this.observing;
     //register to all idtypes
-    vis.data.idtypes.forEach((idtype, i) => {
+    vis.data.forEach((idtype, i) => {
       if (observing.has(idtype.name)) {
         observing.get(idtype.name).push(vis, i);
       } else {
@@ -98,7 +94,7 @@ export class LinksRenderer {
       this.visses.splice(i, 1);
     }
     var observing = this.observing;
-    vis.data.idtypes.forEach((idtype) => {
+    vis.data.forEach((idtype) => {
       var r = observing.get(idtype.name);
       r.remove(vis);
       if (r.visses.length === 0) { //no more reference, we can unregister it
@@ -124,10 +120,10 @@ export class LinksRenderer {
       var $combi = $group.selectAll('g').data(combinations);
       $combi.enter().append('g');
       $combi.exit().remove();
-      $combi.attr('data-id', C.identity);
+      $combi.attr('data-id', identity);
     }
 
-    function createLinks(existing : any[], id : number, locs : geom.AShape[], $group: d3.Selection<any>) {
+    function createLinks(existing : any[], id : number, locs : AShape[], $group: d3.Selection<any>) {
       if (existing.length === 0) {
         return;
       }
@@ -181,7 +177,7 @@ export class LinksRenderer {
               locations.push(-1);
             } else {
               locations.push(tolocate.length);
-              tolocate.push(ranges.list(mapped));
+              tolocate.push(rlist(mapped));
             }
           });
           if (tolocate.length === 0) {

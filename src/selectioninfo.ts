@@ -1,14 +1,14 @@
 /**
  * Created by Samuel Gratzl on 15.12.2014.
  */
-import d3 = require('d3');
-import events = require('../caleydo_core/event');
-import idtypes = require('../caleydo_core/idtype');
-import ranges = require('../caleydo_core/range');
-import C = require('../caleydo_core/main');
+import * as d3 from 'd3';
+import {on as globalOn, off as globalOff} from 'phovea_core/src/event';
+import {IDType, defaultSelectionType, hoverSelectionType, list as listIDTypes} from 'phovea_core/src/idtype';
+import {Range} from 'phovea_core/src/range';
+import {mixin, constantTrue, onDOMNodeRemoved} from 'phovea_core/src';
 
 export class SelectionIDType {
-  private l = (event, type: string, selection: ranges.Range) => {
+  private l = (event, type: string, selection: Range) => {
     this.update(type, selection);
   };
   private $div: d3.Selection<any>;
@@ -17,12 +17,12 @@ export class SelectionIDType {
   private options = {
     useNames: false,
     addClear: true,
-    selectionTypes: [ idtypes.defaultSelectionType, idtypes.hoverSelectionType],
-    filterSelectionTypes : <(selectionType: string) => boolean>C.constantTrue
+    selectionTypes: [ defaultSelectionType, hoverSelectionType],
+    filterSelectionTypes : <(selectionType: string) => boolean>constantTrue
   };
 
-  constructor(public idType: idtypes.IDType, parent: d3.Selection<any>, options : any = {}) {
-    C.mixin(this.options, options);
+  constructor(public idType: IDType, parent: d3.Selection<any>, options : any = {}) {
+    mixin(this.options, options);
     idType.on('select', this.l);
     this.$div = parent.append('div');
     this.$div.append('span').text(idType.name);
@@ -36,7 +36,7 @@ export class SelectionIDType {
     this.options.selectionTypes.forEach((s) => this.update(s, idType.selections(s)));
   }
 
-  private update(type: string, selection: ranges.Range) {
+  private update(type: string, selection: Range) {
     if (!this.options.filterSelectionTypes(type)) {
       return;
     }
@@ -73,7 +73,7 @@ export class SelectionInfo {
   private $div : d3.Selection<any>;
   private handler : SelectionIDType[] = [];
   private listener = (event, idtype) => {
-    if (idtype instanceof idtypes.IDType && this.options.filter(idtype)) {
+    if (idtype instanceof IDType && this.options.filter(idtype)) {
       this.handler.push(new SelectionIDType(idtype, this.$div, this.options));
     }
   };
@@ -81,35 +81,35 @@ export class SelectionInfo {
   private options = {
     useNames: false,
     addClear : true,
-    selectionTypes: [ idtypes.defaultSelectionType, idtypes.hoverSelectionType],
-    filterSelectionTypes : <(selectionType: string) => boolean>C.constantTrue,
-    filter : <(idtype: idtypes.IDType) => boolean>C.constantTrue
+    selectionTypes: [ defaultSelectionType, hoverSelectionType],
+    filterSelectionTypes : <(selectionType: string) => boolean>constantTrue,
+    filter : <(idtype: IDType) => boolean>constantTrue
   };
 
   constructor(public parent:HTMLElement, options = {}) {
-    C.mixin(this.options, options);
+    mixin(this.options, options);
     this.build(d3.select(parent));
   }
 
 
   private build(parent:d3.Selection<any>) {
     var $div = this.$div = parent.append('div').classed('selectioninfo', true);
-    C.onDOMNodeRemoved(<Element>$div.node(), this.destroy, this);
+    onDOMNodeRemoved(<Element>$div.node(), this.destroy, this);
 
-    events.on('register.idtype', this.listener);
-    idtypes.list().forEach((d) => {
+    globalOn('register.idtype', this.listener);
+    listIDTypes().forEach((d) => {
       this.listener(null, d);
     });
   }
 
   private destroy() {
-    events.off('register.idtype', this.listener);
+    globalOff('register.idtype', this.listener);
     this.handler.forEach((h) => h.destroy());
     this.handler.length = 0;
   }
 }
 
-export function createFor(idtype: idtypes.IDType, parent, options) {
+export function createFor(idtype: IDType, parent, options) {
   return new SelectionIDType(idtype, d3.select(parent), options);
 }
 
