@@ -65,6 +65,9 @@
     },
     "entries": "./index.js",
     "ignores": [],
-    "today": "Thu, 03 Nov 2016 13:47:36 GMT"
+    "today": "Thu, 03 Nov 2016 13:47:36 GMT",
+    "libraryExternals": [
+      "d3"
+    ]
   }
 }
