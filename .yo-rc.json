@@ -9,12 +9,6 @@
     ],
     "extensions": [
       {
-        "type": "ajax-adapter",
-        "id": "caleydo_adapter_d3",
-        "module": "ajax_adapter_d3",
-        "extras": {}
-      },
-      {
         "type": "autoload",
         "id": "caleydo_links",
         "module": "link_renderer",
