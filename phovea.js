@@ -7,7 +7,6 @@
 //register all extensions in the registry following the given pattern
 module.exports = function(registry) {
   //registry.push('extension-type', 'extension-id', function() { return System.import('./src/extension_impl'); }, {});
-  registry.push('ajax-adapter', 'caleydo_adapter_d3', function() { return System.import('./src/ajax_adapter_d3'); }, {});
 
   registry.push('autoload', 'caleydo_links', function() { return System.import('./src/link_renderer'); }, {});
 
