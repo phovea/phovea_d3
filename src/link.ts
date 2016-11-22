@@ -2,7 +2,7 @@
  * Created by Samuel Gratzl on 16.12.2014.
  */
 
-import {getter, indexOf,constantTrue,constantFalse, onDOMNodeRemoved, mixin} from 'phovea_core/src';
+import {onDOMNodeRemoved, mixin} from 'phovea_core/src';
 import {Rect, polygon, AShape} from 'phovea_core/src/geom';
 import {Vector2D} from 'phovea_core/src/2D';
 import {IEventHandler} from 'phovea_core/src/event';
@@ -111,7 +111,7 @@ export interface IBandRepresentation {
 }
 
 
-var lineGlobal = d3.svg.line<Vector2D>().interpolate('linear-closed').x(getter('x')).y(getter('y'));
+var lineGlobal = d3.svg.line<Vector2D>().interpolate('linear-closed').x((d)=>d.x).y((d)=>d.y);
 
 class Link {
   id : string;
@@ -239,7 +239,7 @@ class Link {
     }
     m = this.options.mode || 1;
     if (typeof m === 'string') {
-      m = 1 + indexOf(this.options.reprs, (c: any) => c.id === m);
+      m = 1 + this.options.reprs.findIndex((c: any) => c.id === m);
     }
     return m;
   }
@@ -381,7 +381,7 @@ class LinkIDTypeContainer {
     var $root = this.$node.select('g');
     var combinations = [];
     var l = this.arr.length, i, j, a,b,
-      filter = this.options.filter || constantTrue;
+      filter = this.options.filter || (()=>true);
     for (i = 0; i < l; ++i) {
       a = this.arr[i];
       for (j = 0; j < i; ++j) {
@@ -472,6 +472,10 @@ class LinkIDTypeContainer {
 
 }
 
+function constantTrue() {
+  return true;
+}
+
 export class LinkContainer {
   private arr : VisWrapper[] = [];
   node = document.createElement('div');
@@ -486,7 +490,7 @@ export class LinkContainer {
     idTypeFilter : <(idtype: IDType, i: number, dataVis: IDataVis) => boolean>constantTrue,
     hover : false,
     canSelect : constantTrue,
-    canHover: constantFalse
+    canHover: ()=>false
   };
 
   constructor(private parent: Element, private dirtyEvents: string[], options : any = {}) {
@@ -543,7 +547,7 @@ export class LinkContainer {
     if (typeof arg !== 'boolean') {
       elem = <IDataVis>arg;
     }
-    var index = indexOf(this.arr, (w) => w.vis === elem);
+    var index = this.arr.findIndex((w) => w.vis === elem);
     if (index < 0) {
       return false;
     }
