@@ -7,10 +7,10 @@ import * as d3 from 'd3';
 
 
 function getTooltip() {
-  var t = d3.select('body > div.caleydo-tooltip');
+  var t = d3.select('body > div.phovea-tooltip');
   if (t.empty()) {
     t = d3.select('body').append('div')
-      .attr('class', 'caleydo-tooltip')
+      .attr('class', 'phovea-tooltip')
       .style('display', 'block')
       .style('opacity', 0);
   }

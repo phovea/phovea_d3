@@ -33,7 +33,7 @@ export class DataBrowser extends EventHandler {
   }
 
   private buildTree(parent: Element) {
-    const $node = d3.select(parent).append('ul').classed('caleydo-databrowser', true).classed('fa-ul', true);
+    const $node = d3.select(parent).append('ul').classed('phovea-databrowser', true).classed('fa-ul', true);
     const that = this;
 
     function buildLevel($level) {
@@ -89,7 +89,7 @@ export class DataBrowser extends EventHandler {
   }
 
   private buildList(parent: Element) {
-    const $node = d3.select(parent).append('ul').classed('caleydo-databrowser', true).classed('fa-ul', true);
+    const $node = d3.select(parent).append('ul').classed('phovea-databrowser', true).classed('fa-ul', true);
     listData(this.options.filter).then((list: IDataType[]) => {
       const $li = $node.selectAll('li').data(list);
       const $li_enter = $li.enter().append('li').append('span')
@@ -118,9 +118,9 @@ export class DropDataItemHandler extends EventHandler {
 
   private checkType(e: any) {
     if (this.options.types.length === 0) {
-      return hasDnDType(e, 'application/caleydo-data-item');
+      return hasDnDType(e, 'application/phovea-data-item');
     }
-    return this.options.types.some((t) => hasDnDType(e, 'application/caleydo-data-'+t));
+    return this.options.types.some((t) => hasDnDType(e, 'application/phovea-data-'+t));
   }
 
   private register($node:d3.Selection<any>) {
@@ -147,8 +147,8 @@ export class DropDataItemHandler extends EventHandler {
       var e = <DragEvent>(<any>d3.event);
       e.preventDefault();
       var xy = d3.mouse($node.node());
-      if (hasDnDType(e, 'application/caleydo-data-item')) {
-        var id = JSON.parse(e.dataTransfer.getData('application/caleydo-data-item'));
+      if (hasDnDType(e, 'application/phovea-data-item')) {
+        var id = JSON.parse(e.dataTransfer.getData('application/phovea-data-item'));
         getData(id).then((d) => {
           this.fire('drop', d, e.dataTransfer.dropEffect, {x: xy[0], y: xy[1]});
           if (this.handler) {
@@ -177,11 +177,11 @@ export function makeDraggable<T>(sel:d3.Selection<T>, data_getter: (d:T) => IDat
         e.dataTransfer.setData('application/json', JSON.stringify(data.desc));
         var p = JSON.stringify(data.persist());
         //generic variant
-        e.dataTransfer.setData('application/caleydo-data-item', p);
+        e.dataTransfer.setData('application/phovea-data-item', p);
         //variant with the type encoded
-        e.dataTransfer.setData('application/caleydo-data-'+data.desc.type,p);
+        e.dataTransfer.setData('application/phovea-data-'+data.desc.type,p);
         //encode the id in the mime type
-        e.dataTransfer.setData('application/caleydo-data-item-' + p, p);
+        e.dataTransfer.setData('application/phovea-data-item-' + p, p);
       }
     });
 }
