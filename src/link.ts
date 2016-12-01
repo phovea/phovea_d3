@@ -198,7 +198,7 @@ class Link {
     var s = this.idtype.selections().dim(0);
     var selected = !s.isNone ? union.intersect(s).length : 0;
     if (selected > 0) {
-      addBlock(selected / ida.length, selected / idb.length, id + '-sel', clazz + ' caleydo-select-'+defaultSelectionType, 0, 0);
+      addBlock(selected / ida.length, selected / idb.length, id + '-sel', clazz + ' phovea-select-'+defaultSelectionType, 0, 0);
     }
     addBlock(ul / ida.length, ul / idb.length, id, clazz, selected / ida.length, selected / idb.length);
 
@@ -206,7 +206,7 @@ class Link {
       s = this.idtype.selections(hoverSelectionType).dim(0);
       let hovered = !s.isNone ? union.intersect(s).length : 0;
       if (hovered > 0) {
-        addBlock(hovered / ida.length, hovered / idb.length, id + '-sel', clazz + ' caleydo-select-'+hoverSelectionType, 0, 0);
+        addBlock(hovered / ida.length, hovered / idb.length, id + '-sel', clazz + ' phovea-select-'+hoverSelectionType, 0, 0);
       }
     }
 

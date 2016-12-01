@@ -134,7 +134,7 @@ export function createItemRep(context: IBandContext, a: IVisWrapper, aa: Rect, b
       var lb = wrap(locb[i]);
       if (la && lb) {
         r.push({
-          clazz: 'rel-item' + (selections.contains(id) ? ' caleydo-select-selected' : ''),
+          clazz: 'rel-item' + (selections.contains(id) ? ' phovea-select-selected' : ''),
           id: id,
           d: context.line([toPoint(la, lb, amulti), toPoint(lb, la, bmulti)])
         });
