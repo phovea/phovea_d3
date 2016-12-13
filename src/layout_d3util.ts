@@ -58,7 +58,7 @@ class HTMLLayoutElem extends ALayoutElem implements ILayoutElem {
 
   setBounds(x:number, y:number, w:number, h:number) {
     const unit = this.layoutOption('unit', 'px'),
-      doAnimate = this.layoutOption('animate', false) === true;
+      doAnimate = (this.layoutOption<boolean>('animate', false) === true);
 
     const targetBounds =  rect(x,y,w,h);
     var extra = this.layoutOption('set-call',null);
