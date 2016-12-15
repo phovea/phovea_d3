@@ -59,9 +59,9 @@ export function createGroupRep(context: IBandContext, a: IVisWrapper, aa: Rect, 
         loc : locs[i] ? locs[i].aabb() : null
       }; };
     }
-    var groupa = data[0].groupa.map(more(toArray(data[1])));
-    var groupb = data[0].groupb.map(more(toArray(data[2])));
-    var r = [];
+    const groupa = (<any>data[0]).groupa.map(more(toArray(data[1])));
+    const groupb = (<any>data[0]).groupb.map(more(toArray(data[2])));
+    const r = [];
     groupa.forEach((ga) => {
       groupb.forEach((gb) => {
         var int = ga.g.intersect(gb.g);
@@ -110,7 +110,7 @@ export function createItemRep(context: IBandContext, a: IVisWrapper, aa: Rect, b
   return Promise.all([a.ids(), b.ids()]).then((ids) => {
     var ida:Range1D = ids[0].dim(adim);
     var idb:Range1D = ids[1].dim(bdim);
-    var union = ida.intersect(idb);
+    var union:Range1D = ida.intersect(idb);
     var ars = [], brs = [];
     union.forEach((index) => {
       var r = all();
@@ -121,7 +121,7 @@ export function createItemRep(context: IBandContext, a: IVisWrapper, aa: Rect, b
       r.dim(bdim).setList([index]);
       brs.push(r);
     });
-    return Promise.all([Promise.resolve(union), a.locateById.apply(a, ars), b.locateById.apply(b, brs)]);
+    return Promise.all<Range1D>([Promise.resolve(union), a.locateById.apply(a, ars), b.locateById.apply(b, brs)]);
   }).then((locations) => {
     var union = locations[0],
       loca = toArray(locations[1]),

@@ -4,7 +4,7 @@
 
 import './style.scss';
 import * as d3 from 'd3';
-import {identity, hasDnDType,updateDropEffect, mixin, constantTrue} from 'phovea_core/src';
+import {hasDnDType,updateDropEffect, mixin} from 'phovea_core/src';
 import {list as listData, tree as treeData, get as getData} from 'phovea_core/src/data';
 import {EventHandler} from 'phovea_core/src/event';
 import {IDataType} from 'phovea_core/src/datatype';
@@ -17,7 +17,7 @@ export class DataBrowser extends EventHandler {
     this.options = mixin({
       layout: 'tree',
       draggable: true,
-      filter: constantTrue
+      filter: ()=>true
     }, options);
 
     this.$node = this.build(parent);
@@ -165,7 +165,7 @@ export function makeDropable(elem:Element, onDrop?:(d:IDataType, op:string, pos:
   return new DropDataItemHandler(elem, onDrop, options);
 }
 
-export function makeDraggable<T>(sel:d3.Selection<T>, data_getter: (d:T) => IDataType = identity) {
+export function makeDraggable<T>(sel:d3.Selection<T>, data_getter: (d:T) => IDataType = (d:any)=>d) {
   sel
     .attr('draggable', true)
     .on('dragstart', function (d) {

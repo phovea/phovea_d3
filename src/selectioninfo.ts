@@ -5,7 +5,7 @@ import * as d3 from 'd3';
 import {on as globalOn, off as globalOff} from 'phovea_core/src/event';
 import {IDType, defaultSelectionType, hoverSelectionType, list as listIDTypes} from 'phovea_core/src/idtype';
 import {Range} from 'phovea_core/src/range';
-import {mixin, constantTrue, onDOMNodeRemoved} from 'phovea_core/src';
+import {mixin, onDOMNodeRemoved} from 'phovea_core/src';
 
 export class SelectionIDType {
   private l = (event, type: string, selection: Range) => {
@@ -18,7 +18,7 @@ export class SelectionIDType {
     useNames: false,
     addClear: true,
     selectionTypes: [ defaultSelectionType, hoverSelectionType],
-    filterSelectionTypes : <(selectionType: string) => boolean>constantTrue
+    filterSelectionTypes : <(selectionType: string) => boolean>(()=>true)
   };
 
   constructor(public idType: IDType, parent: d3.Selection<any>, options : any = {}) {
@@ -82,8 +82,8 @@ export class SelectionInfo {
     useNames: false,
     addClear : true,
     selectionTypes: [ defaultSelectionType, hoverSelectionType],
-    filterSelectionTypes : <(selectionType: string) => boolean>constantTrue,
-    filter : <(idtype: IDType) => boolean>constantTrue
+    filterSelectionTypes : <(selectionType: string) => boolean>(()=>true),
+    filter : <(idtype: IDType) => boolean>(()=>true)
   };
 
   constructor(public parent:HTMLElement, options = {}) {

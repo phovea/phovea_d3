@@ -1,7 +1,7 @@
 /**
  * Created by Samuel Gratzl on 08.10.2014.
  */
-import {onDOMNodeRemoved, extendClass, isFunction, mixin} from 'phovea_core/src';
+import {onDOMNodeRemoved, extendClass, mixin} from 'phovea_core/src';
 import {toSelectOperation} from 'phovea_core/src/idtype';
 import {IDataType} from 'phovea_core/src/datatype';
 import {AVisInstance} from 'phovea_core/src/vis';
@@ -66,7 +66,7 @@ export function defineVis(name: string, defaultOptions : any, initialSize : any,
     this.$parent = d3.select(parent);
     this.initialSize = d3.functor(initialSize);
     this.options = mixin({}, d3.functor(defaultOptions).call(this,data, options || {}), options);
-    if (isFunction(this.init)) {
+    if (typeof(this.init) === 'function') {
       this.init(data);
     }
     this.$node = build.call(this, this.$parent, this.data, this.size);

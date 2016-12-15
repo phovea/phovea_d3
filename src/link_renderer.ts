@@ -5,7 +5,6 @@ import * as d3 from 'd3';
 import {AShape} from 'phovea_core/src/geom';
 import {list as rlist} from 'phovea_core/src/range';
 import {IDType} from 'phovea_core/src/idtype';
-import {identity} from 'phovea_core/src';
 
 var _id = 0, line = d3.svg.line();
 function nextID() {
@@ -120,7 +119,7 @@ export class LinksRenderer {
       var $combi = $group.selectAll('g').data(combinations);
       $combi.enter().append('g');
       $combi.exit().remove();
-      $combi.attr('data-id', identity);
+      $combi.attr('data-id', String);
     }
 
     function createLinks(existing : any[], id : number, locs : AShape[], $group: d3.Selection<any>) {
