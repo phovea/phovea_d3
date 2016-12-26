@@ -64,7 +64,7 @@
     "extract-loader": "0.0.2"
   },
   "dependencies": {
-    "phovea_core": "github:phovea/phovea_core#v0.0.3",
+    "phovea_core": "github:phovea/phovea_core#add_option_interfaces",
     "@types/d3": "3.5.36",
     "d3": "3.5.17"
   },
