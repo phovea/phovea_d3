@@ -2,7 +2,7 @@
  * Created by Samuel Gratzl on 24.10.2015.
  */
 import {csv, text as d3text} from 'd3';
-import {IMatrix} from 'phovea_core/src/matrix';
+import {IAnyMatrix} from 'phovea_core/src/matrix';
 import {asMatrix, IAsMatrixOptions} from 'phovea_core/src/matrix';
 import {ITable} from 'phovea_core/src/table';
 import {asTable as parseObjects, IAsTableOptions} from 'phovea_core/src/table';
@@ -10,7 +10,7 @@ import {asTable as parseObjects, IAsTableOptions} from 'phovea_core/src/table';
 export {asMatrix as parseMatrix} from 'phovea_core/src/matrix';
 export {asTable as parseObjects, asTableFromArray as parseTable} from 'phovea_core/src/table';
 
-export function parseRemoteMatrix(url: string, options: IAsMatrixOptions = {}): Promise<IMatrix> {
+export function parseRemoteMatrix(url: string, options: IAsMatrixOptions = {}): Promise<IAnyMatrix> {
   return new Promise((resolve, reject) => {
     d3text(url, (error, data) => {
       if (error) {
