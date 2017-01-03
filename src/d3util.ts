@@ -9,7 +9,7 @@ import {wrap} from 'phovea_core/src/geom';
 import * as d3 from 'd3';
 
 export function transform(x = 0, y = 0, rotate = 0, scaleX = 1, scaleY = 1) {
-  var t= d3.transform('');
+  let t= d3.transform('');
   t.translate = [x, y];
   t.rotate = rotate;
   t.scale = [scaleX, scaleY];
@@ -23,10 +23,10 @@ export function transform(x = 0, y = 0, rotate = 0, scaleX = 1, scaleY = 1) {
  * @returns {function(any, any): undefined} the click handler
  */
 export function selectionUtil(data: IDataType, $data : d3.Selection<any>, selector : string) {
-  var l = function (event, type, selected) {
-    var all = $data.selectAll(selector);
+  const l = function (event, type, selected) {
+    const all = $data.selectAll(selector);
     all.classed('phovea-select-' + type, false);
-    var sub = selected.filter(all[0]);
+    const sub = selected.filter(all[0]);
     if (sub.length > 0) {
       d3.selectAll(sub).classed('phovea-select-' + type, true);
     }
@@ -78,7 +78,7 @@ export function defineVis(name: string, defaultOptions : any, initialSize : any,
     if (arguments.length === 1) {
       return this.options[name];
     } else {
-      var b = this.options[name];
+      const b = this.options[name];
       if (b === value) { // no change
         return b;
       }
@@ -93,14 +93,14 @@ export function defineVis(name: string, defaultOptions : any, initialSize : any,
     //dummy
   };
   VisTechnique.prototype.transform = function (scale, rotate) {
-    var bak = {
+    const bak = {
       scale: this.options.scale || [1, 1],
       rotate: this.options.rotate || 0
     };
     if (arguments.length === 0) {
       return bak;
     }
-    var size = this.rawSize;
+    const size = this.rawSize;
     if ((<Element>this.node).tagName.toLowerCase() === 'svg') {
       this.$node.attr({
         width: size[0] * scale[0],
@@ -111,7 +111,7 @@ export function defineVis(name: string, defaultOptions : any, initialSize : any,
       this.$node.style('transform', `rotate(${rotate}deg)scale(${scale[0]},${scale[1]})`);
     }
 
-    var new_ = {
+    const new_ = {
       scale: scale,
       rotate: rotate
     };
@@ -121,14 +121,13 @@ export function defineVis(name: string, defaultOptions : any, initialSize : any,
     return new_;
   };
   VisTechnique.prototype.locateImpl = function (range) {
-    var r = this.locateIt(range);
+    const r = this.locateIt(range);
     if (!r) {
       return null;
     }
-    var that = this;
     return r.then((shape) => {
       shape = wrap(shape);
-      return shape ? shape.transform(that.options.scale || [1, 1], that.options.rotate || 0) : shape;
+      return shape ? shape.transform(this.options.scale || [1, 1], this.options.rotate || 0) : shape;
     });
   };
   VisTechnique.prototype.locateIt = function (range) {

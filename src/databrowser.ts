@@ -3,48 +3,65 @@
  */
 
 import './style.scss';
-import * as d3 from 'd3';
-import {hasDnDType,updateDropEffect, mixin} from 'phovea_core/src';
+import {select, event as d3event, Selection, mouse} from 'd3';
+import {hasDnDType, updateDropEffect, mixin} from 'phovea_core/src';
 import {list as listData, tree as treeData, get as getData} from 'phovea_core/src/data';
 import {EventHandler} from 'phovea_core/src/event';
 import {IDataType} from 'phovea_core/src/datatype';
 
-export class DataBrowser extends EventHandler {
-  private $node:d3.Selection<any>;
+export interface IDataBrowserOptions {
+  /**
+   * layout: 'tree' or 'list'
+   * @default tree
+   */
+  layout?: string;
+  /**
+   * should items be draggable
+   * @default true
+   */
+  draggable?: boolean;
+  /**
+   * optional filter to filter the datasets
+   */
+  filter?: ({[key: string]: string})|((d: IDataType) => boolean);
+}
 
-  constructor(private parent:Element, private options:any = {}) {
+export class DataBrowser extends EventHandler {
+  private $node: Selection<any>;
+
+  constructor(private parent: Element, private options: IDataBrowserOptions = {}) {
     super();
     this.options = mixin({
       layout: 'tree',
       draggable: true,
-      filter: ()=>true
+      filter: () => true
     }, options);
 
     this.$node = this.build(parent);
   }
 
-  private build(parent:Element): d3.Selection<any> {
+  private build(parent: Element): Selection<any> {
     if (this.options.layout === 'tree') {
       return this.buildTree(parent);
     } else if (this.options.layout === 'list') {
       return this.buildList(parent);
     }
-    return d3.select(parent);
+    return select(parent);
   }
 
   private buildTree(parent: Element) {
-    const $node = d3.select(parent).append('ul').classed('phovea-databrowser', true).classed('fa-ul', true);
+    const $node = select(parent).append('ul').classed('phovea-databrowser', true).classed('fa-ul', true);
     const that = this;
 
     function buildLevel($level) {
-      var $childs = $level.selectAll('li').data((d) => d.children);
-      var $childs_enter = $childs.enter().append('li').classed('collapsed', true);
+      const $childs = $level.selectAll('li').data((d) => d.children);
+      const $childs_enter = $childs.enter().append('li').classed('collapsed', true);
 
-      var $label = $childs_enter.append('span')
+      const $label = $childs_enter.append('span')
         .on('click', function (d) {
           if (d.children.length > 0) {
-            var $parent = d3.select(this.parentNode);
-            var collapse = !$parent.classed('collapsed');
+            const $parent = select(this.parentNode);
+            const collapse = !$parent.classed('collapsed');
             $parent.classed('collapsed', collapse);
             that.fire('toggleCollapse', d, collapse);
             $parent.select('i').classed('fa-chevron-down', !collapse).classed('fa-chevron-right', collapse);
@@ -63,7 +80,7 @@ export class DataBrowser extends EventHandler {
 
       $childs.select('span').attr('draggable', (d) => d.data !== null && that.options.draggable);
       $childs.select('span span').text((d) => {
-        var r = d.name;
+        let r = d.name;
         if (d.children.length > 0) {
           r = r + ` (${d.children.length})`;
         }
@@ -74,7 +91,7 @@ export class DataBrowser extends EventHandler {
       });
       $childs.each(function (d) {
         if (d.children.length > 0) {
-          buildLevel(d3.select(this).select('ul'));
+          buildLevel(select(this).select('ul'));
         }
       });
       $childs.exit().remove();
@@ -89,12 +106,12 @@ export class DataBrowser extends EventHandler {
   }
 
   private buildList(parent: Element) {
-    const $node = d3.select(parent).append('ul').classed('phovea-databrowser', true).classed('fa-ul', true);
+    const $node = select(parent).append('ul').classed('phovea-databrowser', true).classed('fa-ul', true);
     listData(this.options.filter).then((list: IDataType[]) => {
       const $li = $node.selectAll('li').data(list);
       const $li_enter = $li.enter().append('li').append('span')
         .call(makeDraggable);
-      $li_enter.append('i').attr('class','fa-li fa fa-file-o');
+      $li_enter.append('i').attr('class', 'fa-li fa fa-file-o');
       $li_enter.append('span');
       $li.select('span span')
         .text((d) => d.desc.name);
@@ -105,36 +122,46 @@ export class DataBrowser extends EventHandler {
   }
 }
 
+export interface IDropDataItemHandlerOptions {
+  /**
+   * data types (matrix, vector, ...) to filter
+   * @default [] = all
+   */
+  types?: string[];
+}
+
+export declare type IDropHandler = (d: IDataType, op: string, pos: {x: number, y: number}) => void;
+
 export class DropDataItemHandler extends EventHandler {
-  private options = {
+  private options: IDropDataItemHandlerOptions = {
     types: []
   };
 
-  constructor(elem:Element, private handler?:(d:IDataType, op:string, pos:{ x: number, y : number}) => void, options = {}) {
+  constructor(elem: Element, private handler?: IDropHandler, options: IDropDataItemHandlerOptions = {}) {
     super();
     mixin(this.options, options);
-    this.register(d3.select(elem));
+    this.register(select(elem));
   }
 
   private checkType(e: any) {
     if (this.options.types.length === 0) {
       return hasDnDType(e, 'application/phovea-data-item');
     }
-    return this.options.types.some((t) => hasDnDType(e, 'application/phovea-data-'+t));
+    return this.options.types.some((t) => hasDnDType(e, 'application/phovea-data-' + t));
   }
 
-  private register($node:d3.Selection<any>) {
+  private register($node: d3.Selection<any>) {
     $node.on('dragenter', () => {
-      var e = <Event>d3.event;
-      var xy = d3.mouse($node.node());
+      const e = <Event>d3event;
+      const xy = mouse($node.node());
       if (this.checkType(e)) {
         e.preventDefault();
         this.fire('enter', {x: xy[0], y: xy[1]});
         return false;
       }
     }).on('dragover', () => {
-      var e = <Event>d3.event;
-      var xy = d3.mouse($node.node());
+      const e = <Event>d3event;
+      const xy = mouse($node.node());
       if (this.checkType(e)) {
         e.preventDefault();
         updateDropEffect(e);
@@ -144,11 +171,11 @@ export class DropDataItemHandler extends EventHandler {
     }).on('dragleave', () => {
       this.fire('leave');
     }).on('drop', () => {
-      var e = <DragEvent>(<any>d3.event);
+      const e = <DragEvent>(<any>d3event);
       e.preventDefault();
-      var xy = d3.mouse($node.node());
+      const xy = mouse($node.node());
       if (hasDnDType(e, 'application/phovea-data-item')) {
-        var id = JSON.parse(e.dataTransfer.getData('application/phovea-data-item'));
+        const id = JSON.parse(e.dataTransfer.getData('application/phovea-data-item'));
         getData(id).then((d) => {
           this.fire('drop', d, e.dataTransfer.dropEffect, {x: xy[0], y: xy[1]});
           if (this.handler) {
@@ -161,25 +188,25 @@ export class DropDataItemHandler extends EventHandler {
   }
 }
 
-export function makeDropable(elem:Element, onDrop?:(d:IDataType, op:string, pos:{ x: number, y : number}) => void, options = {}) {
+export function makeDropable(elem: Element, onDrop?: IDropHandler, options: IDropDataItemHandlerOptions = {}) {
   return new DropDataItemHandler(elem, onDrop, options);
 }
 
-export function makeDraggable<T>(sel:d3.Selection<T>, data_getter: (d:T) => IDataType = (d:any)=>d) {
+export function makeDraggable<T>(sel: d3.Selection<T>, dataGetter: (d: T) => IDataType = (d: any) => d) {
   sel
     .attr('draggable', true)
     .on('dragstart', function (d) {
-      const e = <DragEvent>(<any>d3.event);
-      const data = data_getter(d);
+      const e = <DragEvent>(<any>d3event);
+      const data = dataGetter(d);
       if (data) {
         e.dataTransfer.effectAllowed = 'copy'; //none, copy, copyLink, copyMove, link, linkMove, move, all
         e.dataTransfer.setData('text/plain', data.desc.name);
         e.dataTransfer.setData('application/json', JSON.stringify(data.desc));
-        var p = JSON.stringify(data.persist());
+        const p = JSON.stringify(data.persist());
         //generic variant
         e.dataTransfer.setData('application/phovea-data-item', p);
         //variant with the type encoded
-        e.dataTransfer.setData('application/phovea-data-'+data.desc.type,p);
+        e.dataTransfer.setData('application/phovea-data-' + data.desc.type, p);
         //encode the id in the mime type
         e.dataTransfer.setData('application/phovea-data-item-' + p, p);
       }
@@ -187,6 +214,6 @@ export function makeDraggable<T>(sel:d3.Selection<T>, data_getter: (d:T) => IDat
 }
 
 
-export function create(parent, options = {}) {
+export function create(parent, options: IDataBrowserOptions = {}) {
   return new DataBrowser(parent, options);
 }
