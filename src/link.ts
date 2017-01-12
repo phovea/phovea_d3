@@ -474,7 +474,8 @@ class LinkIDTypeContainer {
       }
     }
     const $combi = $root.selectAll('g').data(combinations, (l) => l.id);
-    $combi.enter().append('g').attr('data-id', (l) => l.id).style('opacity', this.options.animate ? 0 : 1);
+    $combi.enter().append('g').attr('data-id', (l) => l.id);
+    $combi.attr('data-id', (l) => l.id).style('opacity', this.options.animate ? 0 : 1);
     if (this.options.animate) {
       $combi.exit().transition().duration(this.options.duration).style('opacity', 0).remove();
     } else {
