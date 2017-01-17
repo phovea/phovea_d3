@@ -41,7 +41,7 @@ export interface ISelectionIDTypeOptions {
 export class SelectionIDType {
   private readonly l = (event, type: string, selection: Range) => {
     this.update(type, selection);
-  };
+  }
   private readonly $div: d3.Selection<any>;
   private readonly $ul: d3.Selection<any>;
 
@@ -115,7 +115,7 @@ export class SelectionInfo {
     if (idtype instanceof IDType && this.options.filter(idtype)) {
       this.handler.push(new SelectionIDType(idtype, this.$div, this.options));
     }
-  };
+  }
 
   private options: ISelectionInfoOptions = {
     useNames: false,

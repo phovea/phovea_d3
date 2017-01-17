@@ -55,9 +55,9 @@ export class DataBrowser extends EventHandler {
 
     function buildLevel($level) {
       const $childs = $level.selectAll('li').data((d) => d.children);
-      const $childs_enter = $childs.enter().append('li').classed('collapsed', true);
+      const $childsEnter = $childs.enter().append('li').classed('collapsed', true);
 
-      const $label = $childs_enter.append('span')
+      const $label = $childsEnter.append('span')
         .on('click', function (d) {
           if (d.children.length > 0) {
             const $parent = select(this.parentNode);
@@ -73,7 +73,7 @@ export class DataBrowser extends EventHandler {
 
       $label.append('i').attr('class', 'fa-li fa');
       $label.append('span');
-      $childs_enter.append('ul').classed('fa-ul', true);
+      $childsEnter.append('ul').classed('fa-ul', true);
       $childs.select('i')
         .classed('fa-chevron-right', (d) => d.children.length > 0)
         .classed('fa-file-o', (d) => d.children.length === 0);
@@ -109,10 +109,10 @@ export class DataBrowser extends EventHandler {
     const $node = select(parent).append('ul').classed('phovea-databrowser', true).classed('fa-ul', true);
     listData(this.options.filter).then((list: IDataType[]) => {
       const $li = $node.selectAll('li').data(list);
-      const $li_enter = $li.enter().append('li').append('span')
+      const $liEnter = $li.enter().append('li').append('span')
         .call(makeDraggable);
-      $li_enter.append('i').attr('class', 'fa-li fa fa-file-o');
-      $li_enter.append('span');
+      $liEnter.append('i').attr('class', 'fa-li fa fa-file-o');
+      $liEnter.append('span');
       $li.select('span span')
         .text((d) => d.desc.name);
       $li.exit().remove();
