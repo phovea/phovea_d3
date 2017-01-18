@@ -50,14 +50,14 @@ export function createGroupRep(context: IBandContext, a: IVisWrapper, aa: Rect, 
       return r;
     });
     return Promise.all([Promise.resolve({
-      groupa: groupa,
-      groupb: groupb
+      groupa,
+      groupb
     }), a.locateById.apply(a, ars), b.locateById.apply(b, brs)]);
   }).then((data) => {
     function more(locs) {
       return (g, i) => {
         return {
-          g: g,
+          g,
           len: g.length,
           loc: locs[i] ? locs[i].aabb() : null
         };
@@ -141,7 +141,7 @@ export function createItemRep(context: IBandContext, a: IVisWrapper, aa: Rect, b
       if (la && lb) {
         r.push({
           clazz: 'rel-item' + (selections.contains(id) ? ' phovea-select-selected' : ''),
-          id: id,
+          id,
           d: context.line([toPoint(la, lb, amulti), toPoint(lb, la, bmulti)])
         });
       } //TODO optimize use the native select to just update the classes and not recreate them

@@ -9,7 +9,7 @@ import {wrap} from 'phovea_core/src/geom';
 import * as d3 from 'd3';
 
 export function transform(x = 0, y = 0, rotate = 0, scaleX = 1, scaleY = 1) {
-  let t= d3.transform('');
+  const t= d3.transform('');
   t.translate = [x, y];
   t.rotate = rotate;
   t.scale = [scaleX, scaleY];
@@ -111,14 +111,14 @@ export function defineVis(name: string, defaultOptions : any, initialSize : any,
       this.$node.style('transform', `rotate(${rotate}deg)scale(${scale[0]},${scale[1]})`);
     }
 
-    const new_ = {
-      scale: scale,
-      rotate: rotate
+    const act = {
+      scale,
+      rotate
     };
-    this.fire('transform', new_, bak);
+    this.fire('transform', act, bak);
     this.options.scale = scale;
     this.options.rotate = rotate;
-    return new_;
+    return act;
   };
   VisTechnique.prototype.locateImpl = function (range) {
     const r = this.locateIt(range);
@@ -134,11 +134,11 @@ export function defineVis(name: string, defaultOptions : any, initialSize : any,
     return null;
   };
   Object.defineProperty(VisTechnique.prototype, 'node', {
-    get: function() { return this.$node.node(); },
+    get: () => this.$node.node(),
     enumerable: true
   });
   Object.defineProperty(VisTechnique.prototype, 'rawSize', {
-    get: function() { return this.initialSize(this.data); },
+    get: () => this.initialSize(this.data),
     enumerable: true
   });
   Object.keys(functions || {}).forEach((f) => {

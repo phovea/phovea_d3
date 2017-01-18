@@ -33,8 +33,8 @@ class SVGRectLayoutElem extends ALayoutElem implements ILayoutElem {
 
   setBounds(x: number, y: number, w: number, h: number) {
     this.$elem.attr({
-      x: x,
-      y: y,
+      x,
+      y,
       width: w,
       height: h
     });

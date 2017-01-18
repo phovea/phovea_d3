@@ -34,7 +34,7 @@ class VisWrapper implements IVisWrapper {
 
   private readonly l = () => {
     this.callbacks.forEach((c) => c(this));
-  };
+  }
 
   /**
    * @param v the vis to wrap
@@ -241,20 +241,20 @@ class Link {
     function addBlock(ar, br, id, clazz, ashift, bshift) {
       const ll = l.slice();
       //compute the edge vector and scale it by the ratio
-      const a_dir = Vector2D.fromPoints(l[0], aa.corner('se'));
-      const b_dir = Vector2D.fromPoints(l[1], bb.corner('sw'));
-      ll.push(l[1].add(b_dir.multiply(br)));
-      ll.push(l[0].add(a_dir.multiply(ar)));
+      const aDirection = Vector2D.fromPoints(l[0], aa.corner('se'));
+      const bDirection = Vector2D.fromPoints(l[1], bb.corner('sw'));
+      ll.push(l[1].add(bDirection.multiply(br)));
+      ll.push(l[0].add(aDirection.multiply(ar)));
       if (ashift > 0) {
-        ll[0].addEquals(a_dir.multiplyEquals(ashift));
+        ll[0].addEquals(aDirection.multiplyEquals(ashift));
       }
       if (bshift > 0) {
-        ll[1].addEquals(b_dir.multiplyEquals(bshift));
+        ll[1].addEquals(bDirection.multiplyEquals(bshift));
       }
       r.push({
-        clazz: clazz,
+        clazz,
         d: lineGlobal.interpolate('linear-closed')(ll),
-        id: id,
+        id,
         range: rlist(union)
       });
     }
@@ -269,7 +269,7 @@ class Link {
 
     if (this.options.hover) {
       const hs = this.idtype.selections(hoverSelectionType).dim(0);
-      let hovered = !hs.isNone ? union.intersect(hs).length : 0;
+      const hovered = !hs.isNone ? union.intersect(hs).length : 0;
       if (hovered > 0) {
         addBlock(hovered / ida.length, hovered / idb.length, id + '-sel', clazz + ' phovea-select-' + hoverSelectionType, 0, 0);
       }
@@ -330,8 +330,8 @@ class Link {
 
   private render(links: ILink[], $g: d3.Selection<any>) {
     const $links = $g.selectAll('path').data(links, (d) => d.id);
-    const $links_enter = $links.enter().append('path').on('click', (link) => {
-      let e = <Event>d3.event;
+    const $linksEnter = $links.enter().append('path').on('click', (link) => {
+      const e = <Event>d3.event;
       if (link.range && this.options.canSelect()) {
         this.idtype.select(link.range, toSelectOperation(d3.event));
       }
@@ -339,15 +339,15 @@ class Link {
       e.stopPropagation();
     });
     if (this.options.hover) {
-      $links_enter.on('mouseenter', (link) => {
-        let e = <Event>d3.event;
+      $linksEnter.on('mouseenter', (link) => {
+        const e = <Event>d3.event;
         if (link.range && this.options.canHover()) {
           this.idtype.select(hoverSelectionType, link.range);
         }
         e.preventDefault();
         e.stopPropagation();
       }).on('mouseleave', (link) => {
-        let e = <Event>d3.event;
+        const e = <Event>d3.event;
         if (link.range && this.options.canHover()) {
           this.idtype.clear(hoverSelectionType);
         }
@@ -363,7 +363,7 @@ class Link {
     });
     if (this.options.interactive !== false) {
       $g.select('path.rel-back').on('contextmenu', () => {
-        let e = <Event>d3.event;
+        const e = <Event>d3.event;
         this.nextMode($g);
         e.preventDefault();
       });

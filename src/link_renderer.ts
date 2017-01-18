@@ -49,7 +49,7 @@ export class LinksRenderer {
   private readonly $parent: d3.Selection<any>;
   private readonly $div: d3.Selection<any>;
   private readonly $svg: d3.Selection<any>;
-  private visses: IDontKnow[] = [];
+  private visses: IVisEntry[] = [];
   private observing = d3.map<ILinksRendererEntry>();
 
   constructor(parent: HTMLElement) {
@@ -68,13 +68,13 @@ export class LinksRenderer {
 
     idtype.on(IDType.EVENT_SELECT, l);
     return {
-      idtype: idtype,
-      l: l,
+      idtype,
+      l,
       visses: [],
-      push: function (vis, dimension) {
-        this.visses.push({vis: vis, dim: dimension, id: nextID()});
+      push: (vis, dimension) => {
+        this.visses.push({vis, dim: dimension, id: nextID()});
       },
-      remove: function (vis) {
+      remove: (vis) => {
         const v = this.visses;
         for (let i = v.length - 1; i >= 0; --i) {
           if (v[i].vis === vis) {
@@ -90,7 +90,7 @@ export class LinksRenderer {
     idtype.off(IDType.EVENT_SELECT, entry.l);
   }
 
-  push(vis: IDontKnow) {
+  push(vis: any) {
     this.visses.push(vis);
     const observing = this.observing;
     //register to all idtypes
@@ -107,7 +107,7 @@ export class LinksRenderer {
     this.update();
   }
 
-  remove(vis: IDontKnow) {
+  remove(vis: any) {
     const i = this.visses.indexOf(vis);
     if (i >= 0) {
       this.visses.splice(i, 1);
@@ -210,7 +210,7 @@ export class LinksRenderer {
               fulllocations = locations.map((index) => located[index]);
             }
             createLinks(loaded, id, fulllocations, $group);
-            loaded.push({id: id, locs: fulllocations});
+            loaded.push({id, locs: fulllocations});
           });
         });
       });
