@@ -4,7 +4,7 @@
 
 import {IBandContext, IVisWrapper, ILink} from './link';
 import {wrap, AShape, Rect} from 'phovea_core/src/geom';
-import {all, Range1D, asUngrouped, CompositeRange1D, Range1DGroup} from 'phovea_core/src/range';
+import {all, Range1D, Range, asUngrouped, CompositeRange1D, Range1DGroup, list as rlist} from 'phovea_core/src/range';
 
 export function createBlockRep(context: IBandContext, a: IVisWrapper, aa: Rect, b: IVisWrapper, bb: Rect): Promise<ILink[]> {
   const adim = a.dimOf(context.idtype),
@@ -23,11 +23,17 @@ function toArray(a: any) {
   return a;
 }
 
+interface IGroup {
+  g: Range1DGroup;
+  len: number;
+  loc: Rect;
+}
+
 export function createGroupRep(context: IBandContext, a: IVisWrapper, aa: Rect, b: IVisWrapper, bb: Rect): Promise<ILink[]> {
   const adim = a.dimOf(context.idtype),
     bdim = b.dimOf(context.idtype);
 
-  function toGroups(ids) {
+  function toGroups(ids: Range1D) {
     if (ids instanceof CompositeRange1D) {
       return (<CompositeRange1D>ids).groups;
     } else {
@@ -54,8 +60,8 @@ export function createGroupRep(context: IBandContext, a: IVisWrapper, aa: Rect, 
       groupb
     }), a.locateById.apply(a, ars), b.locateById.apply(b, brs)]);
   }).then((data) => {
-    function more(locs) {
-      return (g, i) => {
+    function more(locs: AShape[]) {
+      return (g: Range1DGroup, i: number) => {
         return {
           g,
           len: g.length,
@@ -64,9 +70,9 @@ export function createGroupRep(context: IBandContext, a: IVisWrapper, aa: Rect, 
       };
     }
 
-    const groupa = (<any>data[0]).groupa.map(more(toArray(data[1])));
-    const groupb = (<any>data[0]).groupb.map(more(toArray(data[2])));
-    const r = [];
+    const groupa: IGroup[] = (<any>data[0]).groupa.map(more(toArray(data[1])));
+    const groupb: IGroup[] = (<any>data[0]).groupb.map(more(toArray(data[2])));
+    const r: ILink[] = [];
     groupa.forEach((ga) => {
       groupb.forEach((gb) => {
         const int = ga.g.intersect(gb.g);
@@ -105,7 +111,7 @@ export function createItemRep(context: IBandContext, a: IVisWrapper, aa: Rect, b
     amulti = a.data.dim.length > 1,
     bmulti = b.data.dim.length > 1;
 
-  function toPoint(loc, other, multi) {
+  function toPoint(loc: AShape, other: AShape, multi: boolean) {
     if (!multi) {
       return loc.center;
     }
@@ -117,7 +123,7 @@ export function createItemRep(context: IBandContext, a: IVisWrapper, aa: Rect, b
     const ida: Range1D = ids[0].dim(adim);
     const idb: Range1D = ids[1].dim(bdim);
     const union: Range1D = ida.intersect(idb);
-    const ars = [], brs = [];
+    const ars: Range[]= [], brs: Range[] = [];
     union.forEach((index) => {
       const r = all();
       r.dim(adim).setList([index]);
@@ -132,7 +138,7 @@ export function createItemRep(context: IBandContext, a: IVisWrapper, aa: Rect, b
     const union = locations[0],
       loca = toArray(locations[1]),
       locb = toArray(locations[2]);
-    const r = [];
+    const r: ILink[] = [];
     context.line.interpolate('linear');
     const selections = context.idtype.selections().dim(0);
     union.forEach((id, i) => {
@@ -141,8 +147,9 @@ export function createItemRep(context: IBandContext, a: IVisWrapper, aa: Rect, b
       if (la && lb) {
         r.push({
           clazz: 'rel-item' + (selections.contains(id) ? ' phovea-select-selected' : ''),
-          id,
-          d: context.line([toPoint(la, lb, amulti), toPoint(lb, la, bmulti)])
+          id: String(id),
+          d: context.line([toPoint(la, lb, amulti), toPoint(lb, la, bmulti)]),
+          range: rlist([id])
         });
       } //TODO optimize use the native select to just update the classes and not recreate them
     });
