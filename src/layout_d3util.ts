@@ -10,7 +10,7 @@ class SVGTransformLayoutElem extends ALayoutElem implements ILayoutElem {
     super(options);
   }
 
-  setBounds(x: number, y: number, w: number, h: number) {
+  setBounds(x: number, y: number, w: number, h: number): Promise<void>|null {
     const t = d3.transform(this.$elem.attr('transform'));
     t.translate[0] = x;
     t.translate[1] = y;
@@ -31,7 +31,7 @@ class SVGRectLayoutElem extends ALayoutElem implements ILayoutElem {
     super(options);
   }
 
-  setBounds(x: number, y: number, w: number, h: number) {
+  setBounds(x: number, y: number, w: number, h: number): Promise<void>|null {
     this.$elem.attr({
       x,
       y,

@@ -6,9 +6,10 @@ import * as d3 from 'd3';
 import {AShape} from 'phovea_core/src/geom';
 import {list as rlist, Range} from 'phovea_core/src/range';
 import {IDType} from 'phovea_core/src/idtype';
+import {Vector2D} from 'phovea_core/src/2D';
 
 let _id = 0;
-const line = d3.svg.line();
+const line = d3.svg.line<Vector2D>();
 
 function nextID() {
   return _id++;
@@ -41,7 +42,7 @@ interface ILinksRendererEntry {
   idtype: IDType;
   l(): void;
   visses: IVisEntry[];
-  push(vis: IDontKnow, dim: number);
+  push(vis: IDontKnow, dim: number): void;
   remove(vis: IDontKnow): void;
 }
 
@@ -94,7 +95,7 @@ export class LinksRenderer {
     this.visses.push(vis);
     const observing = this.observing;
     //register to all idtypes
-    vis.data.forEach((idtype, i) => {
+    vis.data.forEach((idtype: IDType, i: number) => {
       if (observing.has(idtype.id)) {
         observing.get(idtype.id).push(vis, i);
       } else {
@@ -126,7 +127,7 @@ export class LinksRenderer {
   }
 
   update(idtype?: IDType) {
-    function prepareCombinations(entry, $group) {
+    function prepareCombinations(entry: ILinksRendererEntry, $group: d3.Selection<any>) {
       const combinations = [];
       const l = entry.visses.length;
       for (let i = 0; i < l; ++i) {
@@ -150,7 +151,7 @@ export class LinksRenderer {
         const swap = id > ex.id;
         const group = Math.min(id, ex.id) + '-' + Math.max(id, ex.id);
         const $g = $group.select('g[data-id="' + group + '"]');
-        const links = [];
+        const links: Vector2D[][]= [];
         locs.forEach((loc, i) => {
           if (loc && ex.locs[i]) {
             const cs = selectCorners(loc, ex.locs[i]);
@@ -165,7 +166,7 @@ export class LinksRenderer {
       });
     }
 
-    function addLinks(entry: ILinksRendererEntry) {
+    const addLinks = (entry: ILinksRendererEntry) => {
       const $group = this.$svg.select(`g[data-idtype="${entry.idtype.id}"]`);
       if (entry.visses.length <= 1) { //no links between single item
         $group.selectAll('*').remove();
@@ -182,12 +183,12 @@ export class LinksRenderer {
       prepareCombinations(entry, $group);
 
       //load and find the matching locations
-      const loaded = [];
+      const loaded: any[] = [];
       entry.visses.forEach((entry) => {
         const id = entry.id;
         entry.vis.data.ids().then((ids: Range) => {
           const dim = ids.dim(entry.dim);
-          const locations = [], tolocate = [];
+          const locations: number[] = [], tolocate: Range[] = [];
           selected.dim(0).iter().forEach((id) => {
             const mapped = dim.indexOf(id);
             if (mapped < 0) {
@@ -202,7 +203,7 @@ export class LinksRenderer {
             return;
           }
           //at least one mapped location
-          entry.vis.locate.apply(entry.vis, tolocate).then((located) => {
+          entry.vis.locate.apply(entry.vis, tolocate).then((located: any[]) => {
             let fulllocations;
             if (tolocate.length === 1) {
               fulllocations = locations.map((index) => index < 0 ? undefined : located);
@@ -214,12 +215,12 @@ export class LinksRenderer {
           });
         });
       });
-    }
+    };
 
     if (idtype) {
-      addLinks.call(this, this.observing.get(idtype.id));
+      addLinks(this.observing.get(idtype.id));
     } else {
-      this.observing.values().forEach(addLinks, this);
+      this.observing.values().forEach(addLinks);
     }
   }
 

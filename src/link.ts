@@ -6,7 +6,10 @@ import {onDOMNodeRemoved, mixin} from 'phovea_core/src';
 import {Rect, polygon, AShape} from 'phovea_core/src/geom';
 import {Vector2D} from 'phovea_core/src/2D';
 import {IEventHandler} from 'phovea_core/src/event';
-import {IDType, defaultSelectionType, hoverSelectionType, toSelectOperation} from 'phovea_core/src/idtype';
+import {
+  IDType, defaultSelectionType, hoverSelectionType, toSelectOperation,
+  IHasUniqueId
+} from 'phovea_core/src/idtype';
 import {Range, Range1D, list as rlist} from 'phovea_core/src/range';
 import {list as listPlugins, IPluginDesc} from 'phovea_core/src/plugin';
 import {ILocateAble,} from 'phovea_core/src/vis';
@@ -92,7 +95,7 @@ class VisWrapper implements IVisWrapper {
 }
 
 
-function toId(a, b) {
+function toId(a: number|IHasUniqueId, b: number|IHasUniqueId) {
   a = typeof a === 'number' ? a : a.id;
   b = typeof b === 'number' ? b : b.id;
   return Math.min(a, b) + '-' + Math.max(a, b);
@@ -183,7 +186,7 @@ class Link {
     this.id = toId(a, b);
   }
 
-  update($g: d3.Selection<any>): Promise<void> {
+  async update($g: d3.Selection<any>): Promise<void> {
     let a = this.a,
       b = this.b,
       al = a.location.aabb(),
@@ -206,25 +209,23 @@ class Link {
       if (this.options.animate) {
         $g.transition().duration(this.options.duration).style('opacity', 1);
       }
-      return;
+      return Promise.resolve();
     }
-    const f = this.options.reprs[Math.abs(this.mode($g)) - 1]
-      .load()
-      .then((plugin) => plugin.factory(this, a, al, b, bl));
-    return f.then((llinks) => {
-      if (this.options.interactive !== false) {
-        llinks.unshift({ //add a background
-          clazz: 'rel-back',
-          d: lineGlobal.interpolate('linear-closed')([al.corner('ne'), bl.corner('nw'), bl.corner('sw'), al.corner('se')]),
-          id: 'background'
-        });
-      }
-      this.render(llinks, $g);
-      if (this.options.animate) {
-        $g.transition().duration(this.options.duration).style('opacity', 1);
-      }
-      return null;
-    });
+    const plugin = await this.options.reprs[Math.abs(this.mode($g)) - 1].load();
+    const llinks = await plugin.factory(this, a, al, b, bl);
+
+    if (this.options.interactive !== false) {
+      llinks.unshift({ //add a background
+        clazz: 'rel-back',
+        d: lineGlobal.interpolate('linear-closed')([al.corner('ne'), bl.corner('nw'), bl.corner('sw'), al.corner('se')]),
+        id: 'background'
+      });
+    }
+    this.render(llinks, $g);
+    if (this.options.animate) {
+      $g.transition().duration(this.options.duration).style('opacity', 1);
+    }
+    return null;
   }
 
   get line() {
@@ -238,7 +239,7 @@ class Link {
 
     const r: ILink[] = [];
 
-    function addBlock(ar, br, id, clazz, ashift, bshift) {
+    function addBlock(ar: number, br: number, id: string, clazz: string, ashift: number, bshift: number) {
       const ll = l.slice();
       //compute the edge vector and scale it by the ratio
       const aDirection = Vector2D.fromPoints(l[0], aa.corner('se'));
@@ -333,7 +334,7 @@ class Link {
     const $linksEnter = $links.enter().append('path').on('click', (link) => {
       const e = <Event>d3.event;
       if (link.range && this.options.canSelect()) {
-        this.idtype.select(link.range, toSelectOperation(d3.event));
+        this.idtype.select(link.range, toSelectOperation(<MouseEvent>d3.event));
       }
       e.preventDefault();
       e.stopPropagation();
@@ -383,7 +384,7 @@ export interface ILinkIDTypeContainerOptions extends ILinkOptions {
 }
 
 class LinkIDTypeContainer {
-  private readonly listener = (event, type: string, selected: Range, added: Range, removed: Range) => this.selectionUpdate(type, selected, added, removed);
+  private readonly listener = (event: any, type: string, selected: Range, added: Range, removed: Range) => this.selectionUpdate(type, selected, added, removed);
   private readonly change = (elem: VisWrapper) => this.changed(elem);
   private readonly arr: VisWrapper[] = [];
   private readonly $node: d3.Selection<any>;
@@ -393,7 +394,7 @@ class LinkIDTypeContainer {
     filter: () => true
   };
 
-  constructor(public readonly idtype: IDType, private readonly parent: Element, options: ILinkIDTypeContainerOptions = {}) {
+  constructor(public readonly idtype: IDType, parent: Element, options: ILinkIDTypeContainerOptions = {}) {
     mixin(this.options, options);
     idtype.on(IDType.EVENT_SELECT, this.listener);
     this.$node = d3.select(parent).append('svg');
@@ -493,14 +494,14 @@ class LinkIDTypeContainer {
   private renderAll() {
     const $root = this.$node.select('g');
     const l = this.arr.length;
-    const promises = [];
+    const promises: Promise<any>[] = [];
     for (let i = 0; i < l; ++i) {
       const ai = this.arr[i];
       for (let j = 1; j < l; ++j) {
         const aj = this.arr[j];
         const id = toId(ai, aj);
         const $g = $root.select('g[data-id="' + id + '"]');
-        $g.each(function (link) {
+        $g.each(function (this: Element, link) {
           promises.push(link.update(d3.select(this)));
         });
       }
@@ -514,11 +515,11 @@ class LinkIDTypeContainer {
     this.prepareCombinations();
     const $root = this.$node.select('g');
 
-    const promises = [];
+    const promises: Promise<any>[] = [];
     this.arr.forEach((o) => {
       if (o !== elem) {
         const id = toId(o, elem);
-        $root.select('g[data-id="' + id + '"]').each(function (link) {
+        $root.select('g[data-id="' + id + '"]').each(function (this: Element, link) {
           promises.push(link.update(d3.select(this)));
         });
       }
@@ -580,7 +581,7 @@ export class LinkContainer {
     idTypeFilter: constantTrue
   };
 
-  constructor(private readonly parent: Element, private readonly dirtyEvents: string[], options: ILinkContainerOptions = {}) {
+  constructor(parent: Element, private readonly dirtyEvents: string[], options: ILinkContainerOptions = {}) {
     parent.appendChild(this.node);
     this.node.classList.add('link-container');
     onDOMNodeRemoved(this.node, this.destroy, this);
@@ -599,8 +600,8 @@ export class LinkContainer {
     this.links.forEach((l) => l.update());
   }
 
-  push(update: boolean, ...elems: IDataVis[]);
-  push(elem: IDataVis, ...elems: IDataVis[]);
+  push(update: boolean, ...elems: IDataVis[]): void;
+  push(elem: IDataVis, ...elems: IDataVis[]): void;
   push(arg: any, ...elems: IDataVis[]) {
     const triggerUpdate = arg !== false;
     if (typeof arg !== 'boolean') {
@@ -628,8 +629,8 @@ export class LinkContainer {
     });
   }
 
-  remove(update: boolean, elem: IDataVis);
-  remove(elem: IDataVis);
+  remove(update: boolean, elem: IDataVis): boolean;
+  remove(elem: IDataVis): boolean;
   remove(arg: any, elem?: IDataVis) {
     const triggerUpdate = arg !== false;
     if (typeof arg !== 'boolean') {
