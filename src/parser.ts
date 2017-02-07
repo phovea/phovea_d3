@@ -12,7 +12,7 @@ export {asTable as parseObjects, asTableFromArray as parseTable} from 'phovea_co
 
 export function parseRemoteMatrix(url: string, options: IAsMatrixOptions = {}): Promise<IAnyMatrix> {
   return new Promise((resolve, reject) => {
-    d3text(url, (error, data) => {
+    d3text(url, (error: string, data: any) => {
       if (error) {
         reject(error);
       }
@@ -24,7 +24,7 @@ export function parseRemoteMatrix(url: string, options: IAsMatrixOptions = {}): 
 
 export function parseRemoteTable(url: string, options: IAsTableOptions = {}): Promise<ITable> {
   return new Promise((resolve, reject) => {
-    csv(url, (error, data) => {
+    csv(url, (error: string, data: any) => {
       if (error) {
         reject(error);
       }

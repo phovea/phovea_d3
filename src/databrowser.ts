@@ -5,7 +5,7 @@
 import './style.scss';
 import {select, event as d3event, Selection, mouse} from 'd3';
 import {hasDnDType, updateDropEffect, mixin} from 'phovea_core/src';
-import {list as listData, tree as treeData, get as getData} from 'phovea_core/src/data';
+import {list as listData, tree as treeData, get as getData, INode} from 'phovea_core/src/data';
 import {EventHandler} from 'phovea_core/src/event';
 import {IDataType} from 'phovea_core/src/datatype';
 
@@ -29,7 +29,7 @@ export interface IDataBrowserOptions {
 export class DataBrowser extends EventHandler {
   private $node: Selection<any>;
 
-  constructor(private parent: Element, private options: IDataBrowserOptions = {}) {
+  constructor(parent: Element, private options: IDataBrowserOptions = {}) {
     super();
     this.options = mixin({
       layout: 'tree',
@@ -53,12 +53,12 @@ export class DataBrowser extends EventHandler {
     const $node = select(parent).append('ul').classed('phovea-databrowser', true).classed('fa-ul', true);
     const that = this;
 
-    function buildLevel($level) {
-      const $childs = $level.selectAll('li').data((d) => d.children);
+    function buildLevel($level: d3.Selection<INode>) {
+      const $childs= $level.selectAll('li').data((d: INode) => d.children);
       const $childsEnter = $childs.enter().append('li').classed('collapsed', true);
 
       const $label = $childsEnter.append('span')
-        .on('click', function (d) {
+        .on('click', function (this: Element, d) {
           if (d.children.length > 0) {
             const $parent = select(this.parentNode);
             const collapse = !$parent.classed('collapsed');
@@ -69,7 +69,7 @@ export class DataBrowser extends EventHandler {
             that.fire('select', d.data);
           }
         })
-        .call(makeDraggable, (d) => d.data);
+        .call(makeDraggable, (d: INode) => d.data);
 
       $label.append('i').attr('class', 'fa-li fa');
       $label.append('span');
@@ -89,7 +89,7 @@ export class DataBrowser extends EventHandler {
         }
         return r;
       });
-      $childs.each(function (d) {
+      $childs.each(function (this: Element, d) {
         if (d.children.length > 0) {
           buildLevel(select(this).select('ul'));
         }
@@ -152,15 +152,16 @@ export class DropDataItemHandler extends EventHandler {
 
   private register($node: d3.Selection<any>) {
     $node.on('dragenter', () => {
-      const e = <Event>d3event;
+      const e = <DragEvent>d3event;
       const xy = mouse($node.node());
       if (this.checkType(e)) {
         e.preventDefault();
         this.fire('enter', {x: xy[0], y: xy[1]});
         return false;
       }
+      return undefined;
     }).on('dragover', () => {
-      const e = <Event>d3event;
+      const e = <DragEvent>d3event;
       const xy = mouse($node.node());
       if (this.checkType(e)) {
         e.preventDefault();
@@ -168,6 +169,7 @@ export class DropDataItemHandler extends EventHandler {
         this.fire('over', {x: xy[0], y: xy[1]});
         return false;
       }
+      return undefined;
     }).on('dragleave', () => {
       this.fire('leave');
     }).on('drop', () => {
@@ -184,6 +186,7 @@ export class DropDataItemHandler extends EventHandler {
         });
         return false;
       }
+      return undefined;
     });
   }
 }
@@ -214,6 +217,6 @@ export function makeDraggable<T>(sel: d3.Selection<T>, dataGetter: (d: T) => IDa
 }
 
 
-export function create(parent, options: IDataBrowserOptions = {}) {
+export function create(parent: HTMLElement, options: IDataBrowserOptions = {}) {
   return new DataBrowser(parent, options);
 }

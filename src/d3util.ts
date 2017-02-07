@@ -4,12 +4,13 @@
 import {onDOMNodeRemoved, extendClass, mixin} from 'phovea_core/src';
 import {toSelectOperation} from 'phovea_core/src/idtype';
 import {IDataType} from 'phovea_core/src/datatype';
+import {Range} from 'phovea_core/src/range';
 import {AVisInstance} from 'phovea_core/src/vis';
 import {wrap} from 'phovea_core/src/geom';
 import * as d3 from 'd3';
 
 export function transform(x = 0, y = 0, rotate = 0, scaleX = 1, scaleY = 1) {
-  const t= d3.transform('');
+  const t = d3.transform('');
   t.translate = [x, y];
   t.rotate = rotate;
   t.scale = [scaleX, scaleY];
@@ -22,8 +23,8 @@ export function transform(x = 0, y = 0, rotate = 0, scaleX = 1, scaleY = 1) {
  * @param selector what type of object are the data bound ot
  * @returns {function(any, any): undefined} the click handler
  */
-export function selectionUtil(data: IDataType, $data : d3.Selection<any>, selector : string) {
-  const l = function (event, type, selected) {
+export function selectionUtil(data: IDataType, $data: d3.Selection<any>, selector: string) {
+  const l = function (event: any, type: string, selected: Range) {
     const all = $data.selectAll(selector);
     all.classed('phovea-select-' + type, false);
     const sub = selected.filter(all[0]);
@@ -39,8 +40,8 @@ export function selectionUtil(data: IDataType, $data : d3.Selection<any>, select
     l(null, 'selected', selected);
   });
 
-  return (d, i) => {
-    data.select(0, [i], toSelectOperation(d3.event));
+  return (d: any, i: number) => {
+    data.select(0, [i], toSelectOperation(<MouseEvent>d3.event));
   };
 }
 
@@ -53,19 +54,19 @@ export function selectionUtil(data: IDataType, $data : d3.Selection<any>, select
  * @param functions an object of additional functions to the vis
  * @returns a function class for this vis
  */
-export function defineVis(name: string, defaultOptions : any, initialSize : number[], build : ($parent: d3.Selection<any>, data: IDataType, size: number[]) => d3.Selection<any>, functions?: any): any;
-export function defineVis(name: string, defaultOptions : (data: IDataType, options: any) => any, initialSize : number[], build : ($parent: d3.Selection<any>, data: IDataType, size: number[]) => d3.Selection<any>, functions?: any) : any;
-export function defineVis(name: string, defaultOptions : any, initialSize : (data: IDataType)=>number[], build : ($parent: d3.Selection<any>, data: IDataType) => d3.Selection<any>, functions?: any) : any;
-export function defineVis(name: string, defaultOptions : (data: IDataType, options: any) => any, initialSize : (data: IDataType)=>number[], build : ($parent: d3.Selection<any>, data: IDataType, size: number[]) => d3.Selection<any>, functions?: any) : any;
-export function defineVis(name: string, defaultOptions : any, initialSize : any,  build : ($parent: d3.Selection<any>, data?: IDataType) => d3.Selection<any>, functions?: any) : any {
+export function defineVis(name: string, defaultOptions: any, initialSize: number[], build: ($parent: d3.Selection<any>, data: IDataType, size: number[]) => d3.Selection<any>, functions?: any): any;
+export function defineVis(name: string, defaultOptions: (data: IDataType, options: any) => any, initialSize: number[], build: ($parent: d3.Selection<any>, data: IDataType, size: number[]) => d3.Selection<any>, functions?: any): any;
+export function defineVis(name: string, defaultOptions: any, initialSize: (data: IDataType) => number[], build: ($parent: d3.Selection<any>, data: IDataType) => d3.Selection<any>, functions?: any): any;
+export function defineVis(name: string, defaultOptions: (data: IDataType, options: any) => any, initialSize: (data: IDataType) => number[], build: ($parent: d3.Selection<any>, data: IDataType, size: number[]) => d3.Selection<any>, functions?: any): any;
+export function defineVis(name: string, defaultOptions: any, initialSize: any, build: ($parent: d3.Selection<any>, data?: IDataType) => d3.Selection<any>, functions?: any): any {
   extendClass(VisTechnique, AVisInstance);
-  function VisTechnique(data: IDataType, parent: Element, options: any) {
+  function VisTechnique(this: any, data: IDataType, parent: Element, options: any) {
     AVisInstance.call(this, data, parent, options);
     this.data = data;
     this.name = name;
     this.$parent = d3.select(parent);
     this.initialSize = d3.functor(initialSize);
-    this.options = mixin({}, d3.functor(defaultOptions).call(this,data, options || {}), options);
+    this.options = mixin({}, d3.functor(defaultOptions).call(this, data, options || {}), options);
     if (typeof(this.init) === 'function') {
       this.init(data);
     }
@@ -73,8 +74,9 @@ export function defineVis(name: string, defaultOptions : any, initialSize : any,
     this.$node.datum(data);
     this.$node.node().__vis__ = this;
   }
+
   VisTechnique.prototype.toString = () => name;
-  VisTechnique.prototype.option = function(name, value) {
+  VisTechnique.prototype.option = function (this: any, name: string, value: any) {
     if (arguments.length === 1) {
       return this.options[name];
     } else {
@@ -83,16 +85,16 @@ export function defineVis(name: string, defaultOptions : any, initialSize : any,
         return b;
       }
       this.fire('option', name, value, b);
-      this.fire('option.'+name,value, b);
+      this.fire('option.' + name, value, b);
       this.options[name] = value;
       this.updatedOption(name, value);
       return b;
     }
   };
-  VisTechnique.prototype.updatedOption = function(name, value) {
+  VisTechnique.prototype.updatedOption = function (name: string, value: any) {
     //dummy
   };
-  VisTechnique.prototype.transform = function (scale, rotate) {
+  VisTechnique.prototype.transform = function (this: any, scale: [number, number], rotate: number) {
     const bak = {
       scale: this.options.scale || [1, 1],
       rotate: this.options.rotate || 0
@@ -120,25 +122,29 @@ export function defineVis(name: string, defaultOptions : any, initialSize : any,
     this.options.rotate = rotate;
     return act;
   };
-  VisTechnique.prototype.locateImpl = function (range) {
+  VisTechnique.prototype.locateImpl = function (this: any, range: Range) {
     const r = this.locateIt(range);
     if (!r) {
       return null;
     }
-    return r.then((shape) => {
+    return r.then((shape: any) => {
       shape = wrap(shape);
       return shape ? shape.transform(this.options.scale || [1, 1], this.options.rotate || 0) : shape;
     });
   };
-  VisTechnique.prototype.locateIt = function (range) {
+  VisTechnique.prototype.locateIt = function (): null {
     return null;
   };
   Object.defineProperty(VisTechnique.prototype, 'node', {
-    get: () => this.$node.node(),
+    get(this: any) {
+      return this.$node.node();
+    },
     enumerable: true
   });
   Object.defineProperty(VisTechnique.prototype, 'rawSize', {
-    get: () => this.initialSize(this.data),
+    get(this: any) {
+      return this.initialSize(this.data);
+    },
     enumerable: true
   });
   Object.keys(functions || {}).forEach((f) => {

@@ -27,7 +27,7 @@ export default function bind<T>(toLabel: ((d: T, i: number) => string) | string,
   const labelfor: ((d: T, i: number) => string) = <any>d3.functor(toLabel);
 
   return function (selection: d3.Selection<T>) {
-    selection.on('mouseenter.tooltip', function (d: T, i) {
+    selection.on('mouseenter.tooltip', function (this: Element, d: T, i) {
       const tooltip = getTooltip();
       tooltip.html(labelfor.call(this, d, i))
         .style('left', ((<MouseEvent>d3.event).pageX + 5) + 'px')
@@ -42,7 +42,7 @@ export default function bind<T>(toLabel: ((d: T, i: number) => string) | string,
         tooltip.interrupt().transition()
           .duration(200)
           .style('opacity', 0)
-          .each('end', function () {
+          .each('end', function (this: Element) {
             d3.select(this).style('display', 'none');
           });
       });

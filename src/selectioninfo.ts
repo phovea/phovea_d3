@@ -39,7 +39,7 @@ export interface ISelectionIDTypeOptions {
 }
 
 export class SelectionIDType {
-  private readonly l = (event, type: string, selection: Range) => {
+  private readonly l = (event: any, type: string, selection: Range) => {
     this.update(type, selection);
   }
   private readonly $div: d3.Selection<any>;
@@ -111,7 +111,7 @@ export interface ISelectionInfoOptions extends ISelectionIDTypeOptions {
 export class SelectionInfo {
   private $div: d3.Selection<any>;
   private handler: SelectionIDType[] = [];
-  private listener = (event, idtype) => {
+  private listener = (event: any, idtype: IDType) => {
     if (idtype instanceof IDType && this.options.filter(idtype)) {
       this.handler.push(new SelectionIDType(idtype, this.$div, this.options));
     }
@@ -137,7 +137,7 @@ export class SelectionInfo {
 
     globalOn(EVENT_REGISTER_IDTYPE, this.listener);
     listIDTypes().forEach((d) => {
-      this.listener(null, d);
+      this.listener(null, <IDType>d);
     });
   }
 

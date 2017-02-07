@@ -1,3 +1,4 @@
+/// <reference types="jasmine" />
 import {transform} from '../src/d3util';
 
 describe('transform', () => {
