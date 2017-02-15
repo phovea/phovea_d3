@@ -268,7 +268,7 @@ class Link {
     const $links_enter = $links.enter().append('path').on('click', (link) => {
       let e = <Event>d3.event;
       if (link.range && this.options.canSelect()) {
-        this.idtype.select(link.range, toSelectOperation(d3.event));
+        this.idtype.select(link.range, toSelectOperation(<MouseEvent>d3.event));
       }
       e.preventDefault();
       e.stopPropagation();
