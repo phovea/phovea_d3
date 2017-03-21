@@ -8,6 +8,7 @@ import {Range} from 'phovea_core/src/range';
 import {AVisInstance} from 'phovea_core/src/vis';
 import {wrap} from 'phovea_core/src/geom';
 import * as d3 from 'd3';
+import {SelectOperation} from 'phovea_core/src/idtype/IIDType';
 
 export function transform(x = 0, y = 0, rotate = 0, scaleX = 1, scaleY = 1) {
   const t = d3.transform('');
@@ -23,7 +24,8 @@ export function transform(x = 0, y = 0, rotate = 0, scaleX = 1, scaleY = 1) {
  * @param selector what type of object are the data bound ot
  * @returns {function(any, any): undefined} the click handler
  */
-export function selectionUtil(data: IDataType, $data: d3.Selection<any>, selector: string) {
+export function selectionUtil(data: IDataType, $data: d3.Selection<any>, selector: string, selectOperation?: SelectOperation) {
+
   const l = function (event: any, type: string, selected: Range) {
     const all = $data.selectAll(selector);
     all.classed('phovea-select-' + type, false);
@@ -41,7 +43,7 @@ export function selectionUtil(data: IDataType, $data: d3.Selection<any>, selecto
   });
 
   return (d: any, i: number) => {
-    data.select(0, [i], toSelectOperation(<MouseEvent>d3.event));
+    data.select(0, [i], toSelectOperation(<MouseEvent>d3.event) || selectOperation);
   };
 }
 
