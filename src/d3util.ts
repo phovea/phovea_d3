@@ -44,7 +44,7 @@ export function selectionUtil(data: IDataType, $data: d3.Selection<any>, selecto
   });
 
   return (d: any, i: number) => {
-    data.select(0, [i], toSelectOperation(<MouseEvent>d3.event) || selectOperation);
+    data.select(0, [i], selectOperation || toSelectOperation(<MouseEvent>d3.event));
   };
 }
 
