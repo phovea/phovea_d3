@@ -25,7 +25,7 @@ export function transform(x = 0, y = 0, rotate = 0, scaleX = 1, scaleY = 1) {
  * @param selectOperation (optional) define selection operation directly (e.g., add, remove set)
  * @returns {function(any, any): undefined} the click handler
  */
-export function selectionUtil(data: IDataType, $data: d3.Selection<any>, selector: string, selectOperation?: SelectOperation) {
+export function selectionUtil(data: IDataType, $data: d3.Selection<any>, selector: string, selectOperation?: SelectOperation) : (d:any, i:number) => void {
 
   const l = function (event: any, type: string, selected: Range) {
     const all = $data.selectAll(selector);
@@ -44,7 +44,7 @@ export function selectionUtil(data: IDataType, $data: d3.Selection<any>, selecto
   });
 
   return (d: any, i: number) => {
-    data.select(0, [i], toSelectOperation(<MouseEvent>d3.event) || selectOperation);
+    data.select(0, [i], selectOperation || toSelectOperation(<MouseEvent>d3.event));
   };
 }
 
