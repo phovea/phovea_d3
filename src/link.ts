@@ -573,7 +573,7 @@ export interface ILinkContainerOptions extends ILinkOptions, ILinkIDTypeContaine
 
 export class LinkContainer {
   private arr: VisWrapper[] = [];
-  node = document.createElement('div');
+  node;
 
   private links: LinkIDTypeContainer[] = [];
 
@@ -582,6 +582,7 @@ export class LinkContainer {
   };
 
   constructor(parent: Element, private readonly dirtyEvents: string[], options: ILinkContainerOptions = {}) {
+    this.node = parent.ownerDocument.createElement('div');
     parent.appendChild(this.node);
     this.node.classList.add('link-container');
     onDOMNodeRemoved(this.node, this.destroy, this);
