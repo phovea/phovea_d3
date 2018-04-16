@@ -1,3 +1,4 @@
+57
 /**
  * Created by Samuel Gratzl on 08.10.2014.
  */
@@ -58,7 +59,8 @@ export function defineVis(name: string, defaultOptions: any, initialSize: number
 export function defineVis(name: string, defaultOptions: (data: IDataType, options: any) => any, initialSize: number[], build: ($parent: d3.Selection<any>, data: IDataType, size: number[]) => d3.Selection<any>, functions?: any): any;
 export function defineVis(name: string, defaultOptions: any, initialSize: (data: IDataType) => number[], build: ($parent: d3.Selection<any>, data: IDataType) => d3.Selection<any>, functions?: any): any;
 export function defineVis(name: string, defaultOptions: (data: IDataType, options: any) => any, initialSize: (data: IDataType) => number[], build: ($parent: d3.Selection<any>, data: IDataType, size: number[]) => d3.Selection<any>, functions?: any): any;
-export function defineVis(name: string, defaultOptions: any, initialSize: any, build: ($parent: d3.Selection<any>, data?: IDataType) => d3.Selection<any>, functions?: any): any {
+export function defineVis(name: string, defaultOptions: any, initialSize: any, build: ($parent: d3.Selection<any>, data?: IDataType) => d3.Selection<any>, functions?: any): any;
+export function defineVis(name: string, defaultOptions: any, initialSize: any, build: (($parent: d3.Selection<any>, data?: IDataType) => d3.Selection<any>) | (($parent: d3.Selection<any>, data: IDataType, size: number[]) => d3.Selection<any>), functions?: any): any {
   extendClass(VisTechnique, AVisInstance);
   function VisTechnique(this: any, data: IDataType, parent: Element, options: any) {
     AVisInstance.call(this, data, parent, options);
