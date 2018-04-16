@@ -1,4 +1,3 @@
-57
 /**
  * Created by Samuel Gratzl on 08.10.2014.
  */
