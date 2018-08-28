@@ -656,7 +656,7 @@ export class LinkContainer {
 
   private destroy() {
     this.node.parentElement.removeChild(this.node);
-    this.arr.forEach(VisWrapper.prototype.destroy.call);
+    this.clear();
   }
 }
 
