@@ -1,7 +1,6 @@
 {
   "name": "phovea_d3",
   "description": "D3 utilitities for Phovea",
-  "homepage": "https://phovea.caleydo.org",
   "version": "2.1.1-SNAPSHOT",
   "author": {
     "name": "The Caleydo Team",
@@ -9,6 +8,7 @@
     "url": "https://caleydo.org"
   },
   "license": "BSD-3-Clause",
+  "homepage": "https://phovea.caleydo.org",
   "bugs": {
     "url": "https://github.com/phovea/phovea_d3/issues"
   },
