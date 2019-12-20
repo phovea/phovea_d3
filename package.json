@@ -1,12 +1,7 @@
 {
   "name": "phovea_d3",
   "description": "D3 utilitities for Phovea",
-<<<<<<< HEAD
   "version": "3.0.0",
-=======
-  "homepage": "https://phovea.caleydo.org",
-  "version": "2.1.0",
->>>>>>> master
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",
