@@ -1,4 +1,4 @@
-/// <reference types="jasmine" />
+/// <reference types="jest" />
 import {transform} from '../src/d3util';
 
 describe('transform', () => {

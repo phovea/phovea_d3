@@ -1,4 +1,4 @@
-/// <reference types="jasmine" />
+/// <reference types="jest" />
 import {parseMatrix} from '../src/parser';
 
 describe('parseMatrix', () => {
