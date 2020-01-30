@@ -51,7 +51,7 @@
     "dist": "mkdirp dist && cd build && tar cvzf ../dist/phovea_d3.tar.gz *"
   },
   "dependencies": {
-    "phovea_core": "github:phovea/phovea_core#develop",
+    "phovea_core": "github:phovea/phovea_core#stoiber/testing_with_jest",
     "@types/d3": "~3.5.36",
     "d3": "~3.5.17"
   },
