@@ -49,9 +49,9 @@
     "dist": "mkdirp dist && cd build && tar cvzf ../dist/phovea_d3.tar.gz *"
   },
   "dependencies": {
-    "phovea_core": "github:phovea/phovea_core#develop",
     "@types/d3": "~3.5.36",
-    "d3": "~3.5.17"
+    "d3": "~3.5.17",
+    "phovea_core": "github:phovea/phovea_core#typescript_3.8"
   },
   "devDependencies": {
     "@types/jasmine": "2.5.47",
