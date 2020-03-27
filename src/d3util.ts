@@ -10,7 +10,7 @@ import {wrap} from 'phovea_core/src/geom';
 import * as d3 from 'd3';
 
 export function transform(x = 0, y = 0, rotate = 0, scaleX = 1, scaleY = 1) {
-  const t = d3.transform('');
+  const t = d3.transform(null);
   t.translate = [x, y];
   t.rotate = rotate;
   t.scale = [scaleX, scaleY];
