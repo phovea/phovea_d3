@@ -1,5 +1,7 @@
-phovea_d3 [![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+phovea_d3  
 =====================
+[![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-url] [![Build Status][circleci-image]][circleci-url]
+
 
 This plugin provides several D3 modules and applications, such as: selection info, data browser, visual links between views.
 
@@ -83,5 +85,4 @@ This repository is part of **[Phovea](http://phovea.caleydo.org/)**, a platform 
 [npm-url]: https://npmjs.org/package/phovea_d3
 [circleci-image]: https://circleci.com/gh/phovea/phovea_d3.svg?style=shield
 [circleci-url]: https://circleci.com/gh/phovea/phovea_d3
-[daviddm-image]: https://david-dm.org/phovea/phovea_d3/status.svg
-[daviddm-url]: https://david-dm.org/phovea/phovea_d3
+
