@@ -217,6 +217,6 @@ export function makeDraggable<T>(sel: d3.Selection<T>, dataGetter: (d: T) => IDa
 }
 
 
-export function create(parent: HTMLElement, options: IDataBrowserOptions = {}) {
+export function createDataBrowser(parent: HTMLElement, options: IDataBrowserOptions = {}) {
   return new DataBrowser(parent, options);
 }

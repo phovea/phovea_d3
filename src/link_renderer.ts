@@ -232,6 +232,6 @@ export class LinksRenderer {
   }
 }
 
-export function create(parent: HTMLElement) {
+export function createLinksRenderer(parent: HTMLElement) {
   return new LinksRenderer(parent);
 }
