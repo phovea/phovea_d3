@@ -5,7 +5,7 @@ import * as d3 from 'd3';
 import {ILayoutElem, ALayoutElem, ILayoutOptions} from 'phovea_core/src/layout';
 import {rect, Rect} from 'phovea_core/src/geom';
 
-class SVGTransformLayoutElem extends ALayoutElem implements ILayoutElem {
+export class SVGTransformLayoutElem extends ALayoutElem implements ILayoutElem {
   constructor(private readonly $elem: d3.Selection<any>, private rawWidth: number, private rawHeight: number, options: ILayoutOptions = {}) {
     super(options);
   }
@@ -24,9 +24,13 @@ class SVGTransformLayoutElem extends ALayoutElem implements ILayoutElem {
     const t = d3.transform(this.$elem.attr('transform'));
     return rect(t.translate[0], t.translate[1], this.rawWidth * t.scale[0], this.rawHeight * t.scale[1]);
   }
+
+  static wrapSVGTransform($elem: d3.Selection<any>, rawWidth: number, rawHeight: number, options: ILayoutOptions = {}) {
+    return new SVGTransformLayoutElem($elem, rawWidth, rawHeight, options);
+  }
 }
 
-class SVGRectLayoutElem extends ALayoutElem implements ILayoutElem {
+export class SVGRectLayoutElem extends ALayoutElem implements ILayoutElem {
   constructor(private readonly $elem: d3.Selection<any>, options: ILayoutOptions = {}) {
     super(options);
   }
@@ -43,6 +47,10 @@ class SVGRectLayoutElem extends ALayoutElem implements ILayoutElem {
 
   getBounds() {
     return rect(parseFloat(this.$elem.attr('x')), parseFloat(this.$elem.attr('y')), parseFloat(this.$elem.attr('width')), parseFloat(this.$elem.attr('height')));
+  }
+
+  static wrapSVGRect($elem: d3.Selection<any>, options: ILayoutOptions = {}) {
+    return new SVGRectLayoutElem($elem, options);
   }
 }
 
@@ -77,7 +85,7 @@ export interface IHTMLLayoutOptions extends ILayoutOptions {
   onSetBounds?(): void;
 }
 
-class HTMLLayoutElem extends ALayoutElem implements ILayoutElem {
+export class HTMLLayoutElem extends ALayoutElem implements ILayoutElem {
   private readonly $node: d3.Selection<any>;
   private targetBounds: Rect = null;
 
@@ -143,14 +151,7 @@ class HTMLLayoutElem extends ALayoutElem implements ILayoutElem {
 
     return rect(v(style.left), v(style.top), v(style.width), v(style.height));
   }
-}
-
-export function wrapSVGTransform($elem: d3.Selection<any>, rawWidth: number, rawHeight: number, options: ILayoutOptions = {}) {
-  return new SVGTransformLayoutElem($elem, rawWidth, rawHeight, options);
-}
-export function wrapSVGRect($elem: d3.Selection<any>, options: ILayoutOptions = {}) {
-  return new SVGRectLayoutElem($elem, options);
-}
-export function wrapDom(elem: HTMLElement, options: IHTMLLayoutOptions = {}) {
-  return new HTMLLayoutElem(elem, options);
+  static wrapDom(elem: HTMLElement, options: IHTMLLayoutOptions = {}) {
+    return new HTMLLayoutElem(elem, options);
+  }
 }

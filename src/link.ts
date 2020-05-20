@@ -554,12 +554,12 @@ class LinkIDTypeContainer {
     }
     return this.arr.length > 0;
   }
-
+  static constantTrue() {
+    return true;
+  }
 }
 
-function constantTrue() {
-  return true;
-}
+
 
 export interface ILinkContainerOptions extends ILinkOptions, ILinkIDTypeContainerOptions {
   /**
@@ -578,7 +578,7 @@ export class LinkContainer {
   private links: LinkIDTypeContainer[] = [];
 
   private options: ILinkContainerOptions = {
-    idTypeFilter: constantTrue
+    idTypeFilter: LinkIDTypeContainer.constantTrue
   };
 
   constructor(parent: Element, private readonly dirtyEvents: string[], options: ILinkContainerOptions = {}) {
@@ -659,5 +659,3 @@ export class LinkContainer {
     this.clear();
   }
 }
-
-export default LinkContainer;

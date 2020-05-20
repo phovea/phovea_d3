@@ -95,6 +95,10 @@ export class SelectionIDType {
   destroy() {
     this.idType.off(IDType.EVENT_SELECT, this.l);
   }
+
+  static createFor(idtype: IDType, parent: HTMLElement, options: ISelectionIDTypeOptions) {
+    return new SelectionIDType(idtype, d3.select(parent), options);
+  }
 }
 
 export interface ISelectionInfoOptions extends ISelectionIDTypeOptions {
@@ -146,12 +150,8 @@ export class SelectionInfo {
     this.handler.forEach((h) => h.destroy());
     this.handler.length = 0;
   }
-}
 
-export function createFor(idtype: IDType, parent: HTMLElement, options: ISelectionIDTypeOptions) {
-  return new SelectionIDType(idtype, d3.select(parent), options);
-}
-
-export function create(parent: HTMLElement, options: ISelectionInfoOptions = {}) {
-  return new SelectionInfo(parent, options);
+  static create(parent: HTMLElement, options: ISelectionInfoOptions = {}) {
+    return new SelectionInfo(parent, options);
+  }
 }

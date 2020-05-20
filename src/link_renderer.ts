@@ -230,8 +230,8 @@ export class LinksRenderer {
     $g.exit().remove();
     $g.attr('data-idtype', (d) => d.idtype.id);
   }
-}
 
-export function createLinksRenderer(parent: HTMLElement) {
-  return new LinksRenderer(parent);
+  static createLinksRenderer(parent: HTMLElement) {
+    return new LinksRenderer(parent);
+  }
 }
