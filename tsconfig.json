@@ -24,9 +24,9 @@
     "allowSyntheticDefaultImports": true // required for i18next
   },
   "include": [
+    "dist/index.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "tests/**/*.ts",
     "index.ts",
     "tsd.d.ts"
   ]
