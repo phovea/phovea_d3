@@ -1,3 +1,4 @@
+import { Range } from 'phovea_core';
 import { IDType } from 'phovea_core';
 interface IDontKnow {
     ids(): Promise<Range>;

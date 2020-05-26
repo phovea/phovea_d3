@@ -3,6 +3,7 @@
  * @deprecated old use links module
  */
 import * as d3 from 'd3';
+import { Range } from 'phovea_core';
 import { IDType } from 'phovea_core';
 let _id = 0;
 const line = d3.svg.line();
