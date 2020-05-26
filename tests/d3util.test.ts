@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import {D3Utils} from '../src/d3util';
+import {D3Utils} from '../src/d3utils/d3util';
 
 describe('transform', () => {
   it('empty', () => {

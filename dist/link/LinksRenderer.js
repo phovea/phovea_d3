@@ -197,4 +197,4 @@ export class LinksRenderer {
         return new LinksRenderer(parent);
     }
 }
-//# sourceMappingURL=link_renderer.js.map
+//# sourceMappingURL=LinksRenderer.js.map
