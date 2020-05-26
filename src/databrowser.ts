@@ -4,8 +4,8 @@
 
 import './style.scss';
 import {select, event as d3event, Selection, mouse} from 'd3';
-import {hasDnDType, updateDropEffect, mixin} from 'phovea_core';
-import {list as listData, tree as treeData, get as getData, INode} from 'phovea_core';
+import {DnDUtils, BaseUtils} from 'phovea_core';
+import {DataCache, INode} from 'phovea_core';
 import {EventHandler} from 'phovea_core';
 import {IDataType} from 'phovea_core';
 
@@ -26,15 +26,15 @@ export class DropDataItemHandler extends EventHandler {
 
   constructor(elem: Element, private handler?: IDropHandler, options: IDropDataItemHandlerOptions = {}) {
     super();
-    mixin(this.options, options);
+    BaseUtils.mixin(this.options, options);
     this.register(select(elem));
   }
 
   private checkType(e: any) {
     if (this.options.types.length === 0) {
-      return hasDnDType(e, 'application/phovea-data-item');
+      return DnDUtils.getInstance().hasDnDType(e, 'application/phovea-data-item');
     }
-    return this.options.types.some((t) => hasDnDType(e, 'application/phovea-data-' + t));
+    return this.options.types.some((t) => DnDUtils.getInstance().hasDnDType(e, 'application/phovea-data-' + t));
   }
 
   private register($node: d3.Selection<any>) {
@@ -52,7 +52,7 @@ export class DropDataItemHandler extends EventHandler {
       const xy = mouse($node.node());
       if (this.checkType(e)) {
         e.preventDefault();
-        updateDropEffect(e);
+        DnDUtils.getInstance().updateDropEffect(e);
         this.fire('over', {x: xy[0], y: xy[1]});
         return false;
       }
@@ -63,9 +63,9 @@ export class DropDataItemHandler extends EventHandler {
       const e = <DragEvent>(<any>d3event);
       e.preventDefault();
       const xy = mouse($node.node());
-      if (hasDnDType(e, 'application/phovea-data-item')) {
+      if (DnDUtils.getInstance().hasDnDType(e, 'application/phovea-data-item')) {
         const id = JSON.parse(e.dataTransfer.getData('application/phovea-data-item'));
-        getData(id).then((d) => {
+        DataCache.getInstance().get(id).then((d) => {
           this.fire('drop', d, e.dataTransfer.dropEffect, {x: xy[0], y: xy[1]});
           if (this.handler) {
             this.handler(d, e.dataTransfer.dropEffect, {x: xy[0], y: xy[1]});
@@ -125,7 +125,7 @@ export class DataBrowser extends EventHandler {
 
   constructor(parent: Element, private options: IDataBrowserOptions = {}) {
     super();
-    this.options = mixin({
+    this.options = BaseUtils.mixin({
       layout: 'tree',
       draggable: true,
       filter: () => true
@@ -191,7 +191,7 @@ export class DataBrowser extends EventHandler {
       $childs.exit().remove();
     }
 
-    treeData(this.options.filter).then((root) => {
+    DataCache.getInstance().tree(this.options.filter).then((root) => {
       $node.datum(root);
       buildLevel($node);
     });
@@ -201,7 +201,7 @@ export class DataBrowser extends EventHandler {
 
   private buildList(parent: Element) {
     const $node = select(parent).append('ul').classed('phovea-databrowser', true).classed('fa-ul', true);
-    listData(this.options.filter).then((list: IDataType[]) => {
+    DataCache.getInstance().list(this.options.filter).then((list: IDataType[]) => {
       const $li = $node.selectAll('li').data(list);
       const $liEnter = $li.enter().append('li').append('span')
         .call(DropDataItemHandler.makeDraggable);

@@ -1,12 +1,12 @@
 /**
  * Created by Samuel Gratzl on 08.10.2014.
  */
-import {onDOMNodeRemoved, extendClass, mixin} from 'phovea_core';
-import {toSelectOperation} from 'phovea_core';
+import {AppContext, BaseUtils} from 'phovea_core';
+import {SelectionUtils} from 'phovea_core';
 import {IDataType} from 'phovea_core';
 import {Range} from 'phovea_core';
 import {AVisInstance} from 'phovea_core';
-import {wrap} from 'phovea_core';
+import {ShapeUtils} from 'phovea_core';
 import * as d3 from 'd3';
 
 export class D3Utils {
@@ -35,7 +35,7 @@ export class D3Utils {
       }
     };
     data.on('select', l);
-    onDOMNodeRemoved(<Element>$data.node(), function () {
+    AppContext.getInstance().onDOMNodeRemoved(<Element>$data.node(), function () {
       data.off('select', l);
     });
     data.selections().then(function (selected) {
@@ -43,7 +43,7 @@ export class D3Utils {
     });
 
     return (d: any, i: number) => {
-      data.select(0, [i], toSelectOperation(<MouseEvent>d3.event));
+      data.select(0, [i], SelectionUtils.toSelectOperation(<MouseEvent>d3.event));
     };
   }
 
@@ -61,14 +61,14 @@ export class D3Utils {
   static defineVis(name: string, defaultOptions: any, initialSize: (data: IDataType) => number[], build: ($parent: d3.Selection<any>, data: IDataType) => d3.Selection<any>, functions?: any): any;
   static defineVis(name: string, defaultOptions: (data: IDataType, options: any) => any, initialSize: (data: IDataType) => number[], build: ($parent: d3.Selection<any>, data: IDataType, size: number[]) => d3.Selection<any>, functions?: any): any;
   static defineVis(name: string, defaultOptions: any, initialSize: any, build: ($parent: d3.Selection<any>, data?: IDataType, size?: number[]) => d3.Selection<any>, functions?: any): any {
-    extendClass(VisTechnique, AVisInstance);
+    BaseUtils.extendClass(VisTechnique, AVisInstance);
     function VisTechnique(this: any, data: IDataType, parent: Element, options: any) {
       AVisInstance.call(this, data, parent, options);
       this.data = data;
       this.name = name;
       this.$parent = d3.select(parent);
       this.initialSize = d3.functor(initialSize);
-      this.options = mixin({}, d3.functor(defaultOptions).call(this, data, options || {}), options);
+      this.options = BaseUtils.mixin({}, d3.functor(defaultOptions).call(this, data, options || {}), options);
       if (typeof(this.init) === 'function') {
         this.init(data);
       }
@@ -130,7 +130,7 @@ export class D3Utils {
         return null;
       }
       return r.then((shape: any) => {
-        shape = wrap(shape);
+        shape = ShapeUtils.wrapToShape(shape);
         return shape ? shape.transform(this.options.scale || [1, 1], this.options.rotate || 0) : shape;
       });
     };

@@ -3,9 +3,9 @@
  */
 import {csv, text as d3text} from 'd3';
 import {IAnyMatrix} from 'phovea_core';
-import {asMatrix, IAsMatrixOptions} from 'phovea_core';
+import {Matrix, IAsMatrixOptions} from 'phovea_core';
 import {ITable} from 'phovea_core';
-import {asTable as parseObjects, IAsTableOptions} from 'phovea_core';
+import {Table, IAsTableOptions} from 'phovea_core';
 
 
 export class Parser {
@@ -16,7 +16,7 @@ export class Parser {
           reject(error);
         }
         const rows = csv.parseRows(data);
-        resolve(asMatrix(rows, options));
+        resolve(Matrix.asMatrix(rows, options));
       });
     });
   }
@@ -27,7 +27,7 @@ export class Parser {
         if (error) {
           reject(error);
         }
-        resolve(parseObjects(data, options));
+        resolve(Table.asTable(data, options));
       });
     });
   }

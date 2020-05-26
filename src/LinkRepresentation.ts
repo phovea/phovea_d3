@@ -3,8 +3,8 @@
  */
 
 import {IBandContext, IVisWrapper, ILink} from './link';
-import {wrap, AShape, Rect} from 'phovea_core';
-import {all, Range1D, Range, asUngrouped, CompositeRange1D, Range1DGroup, list as rlist} from 'phovea_core';
+import {ShapeUtils, AShape, Rect} from 'phovea_core';
+import {Range1D, Range, CompositeRange1D, Range1DGroup} from 'phovea_core';
 
 
 interface IGroup {
@@ -41,7 +41,7 @@ export class LinkRepresentation {
       if (ids instanceof CompositeRange1D) {
         return (<CompositeRange1D>ids).groups;
       } else {
-        return [asUngrouped(ids)];
+        return [Range1DGroup.asUngrouped(ids)];
       }
     }
 
@@ -50,12 +50,12 @@ export class LinkRepresentation {
       const groupb: Range1DGroup[] = toGroups(ids[1].dim(bdim));
 
       const ars = groupa.map((group) => {
-        const r = all();
+        const r = Range.all();
         r.dims[adim] = group;
         return r;
       });
       const brs = groupb.map((group) => {
-        const r = all();
+        const r = Range.all();
         r.dims[bdim] = group;
         return r;
       });
@@ -129,11 +129,11 @@ export class LinkRepresentation {
       const union: Range1D = ida.intersect(idb);
       const ars: Range[]= [], brs: Range[] = [];
       union.forEach((index) => {
-        const r = all();
+        const r = Range.all();
         r.dim(adim).setList([index]);
         ars.push(r);
 
-        const r2 = all();
+        const r2 = Range.all();
         r2.dim(bdim).setList([index]);
         brs.push(r2);
       });
@@ -146,14 +146,14 @@ export class LinkRepresentation {
       context.line.interpolate('linear');
       const selections = context.idtype.selections().dim(0);
       union.forEach((id, i) => {
-        const la = wrap(loca[i]);
-        const lb = wrap(locb[i]);
+        const la = ShapeUtils.wrapToShape(loca[i]);
+        const lb = ShapeUtils.wrapToShape(locb[i]);
         if (la && lb) {
           r.push({
             clazz: 'rel-item' + (selections.contains(id) ? ' phovea-select-selected' : ''),
             id: String(id),
             d: context.line([toPoint(la, lb, amulti), toPoint(lb, la, bmulti)]),
-            range: rlist([id])
+            range: Range.list([id])
           });
         } //TODO optimize use the native select to just update the classes and not recreate them
       });

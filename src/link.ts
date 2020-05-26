@@ -2,16 +2,16 @@
  * Created by Samuel Gratzl on 16.12.2014.
  */
 
-import {onDOMNodeRemoved, mixin} from 'phovea_core';
-import {Rect, polygon, AShape} from 'phovea_core';
+import {AppContext, BaseUtils} from 'phovea_core';
+import {Rect, Polygon, AShape} from 'phovea_core';
 import {Vector2D} from 'phovea_core';
 import {IEventHandler} from 'phovea_core';
 import {
-  IDType, defaultSelectionType, hoverSelectionType, toSelectOperation,
+  IDType, SelectionUtils,
   IHasUniqueId
 } from 'phovea_core';
-import {Range, Range1D, list as rlist} from 'phovea_core';
-import {list as listPlugins, IPluginDesc} from 'phovea_core';
+import {Range, Range1D} from 'phovea_core';
+import {PluginRegistry, IPluginDesc} from 'phovea_core';
 import {ILocateAble} from 'phovea_core';
 import * as d3 from 'd3';
 
@@ -171,7 +171,7 @@ class Link {
   readonly id: string;
 
   private readonly options: ILinkOptions = {
-    reprs: listPlugins('link-representation').sort((a: any, b: any) => b.granularity - a.granularity),
+    reprs: PluginRegistry.getInstance().listPlugins('link-representation').sort((a: any, b: any) => b.granularity - a.granularity),
     animate: false,
     duration: 200,
     interactive: false,
@@ -182,7 +182,7 @@ class Link {
   };
 
   constructor(public readonly a: VisWrapper, public readonly b: VisWrapper, private readonly idtype: IDType, private readonly all: VisWrapper[], options: ILinkOptions = {}) {
-    mixin(this.options, options);
+    BaseUtils.mixin(this.options, options);
     this.id = toId(a, b);
   }
 
@@ -256,7 +256,7 @@ class Link {
         clazz,
         d: lineGlobal.interpolate('linear-closed')(ll),
         id,
-        range: rlist(union)
+        range: Range.list(union)
       });
     }
 
@@ -264,15 +264,15 @@ class Link {
     const s = this.idtype.selections().dim(0);
     const selected = !s.isNone ? union.intersect(s).length : 0;
     if (selected > 0) {
-      addBlock(selected / ida.length, selected / idb.length, id + '-sel', clazz + ' phovea-select-' + defaultSelectionType, 0, 0);
+      addBlock(selected / ida.length, selected / idb.length, id + '-sel', clazz + ' phovea-select-' + SelectionUtils.defaultSelectionType, 0, 0);
     }
     addBlock(ul / ida.length, ul / idb.length, id, clazz, selected / ida.length, selected / idb.length);
 
     if (this.options.hover) {
-      const hs = this.idtype.selections(hoverSelectionType).dim(0);
+      const hs = this.idtype.selections(SelectionUtils.hoverSelectionType).dim(0);
       const hovered = !hs.isNone ? union.intersect(hs).length : 0;
       if (hovered > 0) {
-        addBlock(hovered / ida.length, hovered / idb.length, id + '-sel', clazz + ' phovea-select-' + hoverSelectionType, 0, 0);
+        addBlock(hovered / ida.length, hovered / idb.length, id + '-sel', clazz + ' phovea-select-' + SelectionUtils.hoverSelectionType, 0, 0);
       }
     }
 
@@ -286,7 +286,7 @@ class Link {
     } else {
       return false;
     }
-    const shape = polygon(aa.corner('ne'), bb.corner('nw'), bb.corner('sw'), aa.corner('se'));
+    const shape = Polygon.polygon(aa.corner('ne'), bb.corner('nw'), bb.corner('sw'), aa.corner('se'));
     //check if we have an intersection
     return this.all.every((other) => {
       if (other === this.a || other === this.b) { //don't check me
@@ -334,7 +334,7 @@ class Link {
     const $linksEnter = $links.enter().append('path').on('click', (link) => {
       const e = <Event>d3.event;
       if (link.range && this.options.canSelect()) {
-        this.idtype.select(link.range, toSelectOperation(<MouseEvent>d3.event));
+        this.idtype.select(link.range, SelectionUtils.toSelectOperation(<MouseEvent>d3.event));
       }
       e.preventDefault();
       e.stopPropagation();
@@ -343,14 +343,14 @@ class Link {
       $linksEnter.on('mouseenter', (link) => {
         const e = <Event>d3.event;
         if (link.range && this.options.canHover()) {
-          this.idtype.select(hoverSelectionType, link.range);
+          this.idtype.select(SelectionUtils.hoverSelectionType, link.range);
         }
         e.preventDefault();
         e.stopPropagation();
       }).on('mouseleave', (link) => {
         const e = <Event>d3.event;
         if (link.range && this.options.canHover()) {
-          this.idtype.clear(hoverSelectionType);
+          this.idtype.clear(SelectionUtils.hoverSelectionType);
         }
         e.preventDefault();
         e.stopPropagation();
@@ -395,7 +395,7 @@ class LinkIDTypeContainer {
   };
 
   constructor(public readonly idtype: IDType, parent: Element, options: ILinkIDTypeContainerOptions = {}) {
-    mixin(this.options, options);
+    BaseUtils.mixin(this.options, options);
     idtype.on(IDType.EVENT_SELECT, this.listener);
     this.$node = d3.select(parent).append('svg');
     this.$node.style({
@@ -404,7 +404,7 @@ class LinkIDTypeContainer {
       opacity: 1
     });
     this.$node.append('g');
-    onDOMNodeRemoved(<Element>this.$node.node(), this.destroy, this);
+    AppContext.getInstance().onDOMNodeRemoved(<Element>this.$node.node(), this.destroy, this);
   }
 
   private selectionUpdate(type: string, selected: Range, added: Range, removed: Range) {
@@ -585,8 +585,8 @@ export class LinkContainer {
     this.node = parent.ownerDocument.createElement('div');
     parent.appendChild(this.node);
     this.node.classList.add('link-container');
-    onDOMNodeRemoved(this.node, this.destroy, this);
-    mixin(this.options, options);
+    AppContext.getInstance().onDOMNodeRemoved(this.node, this.destroy, this);
+    BaseUtils.mixin(this.options, options);
   }
 
   hide() {

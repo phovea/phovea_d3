@@ -2,16 +2,14 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 import * as d3 from 'd3';
-import {on as globalOn, off as globalOff} from 'phovea_core';
+import {EventHandler} from 'phovea_core';
 import {
   IDType,
-  defaultSelectionType,
-  hoverSelectionType,
-  list as listIDTypes,
-  EVENT_REGISTER_IDTYPE
+  SelectionUtils,
+  IDTypeManager
 } from 'phovea_core';
 import {Range} from 'phovea_core';
-import {mixin, onDOMNodeRemoved} from 'phovea_core';
+import {BaseUtils, AppContext} from 'phovea_core';
 
 export interface ISelectionIDTypeOptions {
   /**
@@ -48,12 +46,12 @@ export class SelectionIDType {
   private readonly options: ISelectionIDTypeOptions = {
     useNames: false,
     addClear: true,
-    selectionTypes: [defaultSelectionType, hoverSelectionType],
+    selectionTypes: [SelectionUtils.defaultSelectionType, SelectionUtils.hoverSelectionType],
     filterSelectionTypes: <(selectionType: string) => boolean>(() => true)
   };
 
   constructor(public readonly idType: IDType, parent: d3.Selection<any>, options: ISelectionIDTypeOptions = {}) {
-    mixin(this.options, options);
+    BaseUtils.mixin(this.options, options);
     idType.on(IDType.EVENT_SELECT, this.l);
     this.$div = parent.append('div');
     this.$div.append('span').text(idType.name);
@@ -124,29 +122,29 @@ export class SelectionInfo {
   private options: ISelectionInfoOptions = {
     useNames: false,
     addClear: true,
-    selectionTypes: [defaultSelectionType, hoverSelectionType],
+    selectionTypes: [SelectionUtils.defaultSelectionType, SelectionUtils.hoverSelectionType],
     filterSelectionTypes: <(selectionType: string) => boolean>(() => true),
     filter: <(idtype: IDType) => boolean>(() => true)
   };
 
   constructor(public readonly parent: HTMLElement, options: ISelectionInfoOptions = {}) {
-    mixin(this.options, options);
+    BaseUtils.mixin(this.options, options);
     this.build(d3.select(parent));
   }
 
 
   private build(parent: d3.Selection<any>) {
     const $div = this.$div = parent.append('div').classed('selectioninfo', true);
-    onDOMNodeRemoved(<Element>$div.node(), this.destroy, this);
+    AppContext.getInstance().onDOMNodeRemoved(<Element>$div.node(), this.destroy, this);
 
-    globalOn(EVENT_REGISTER_IDTYPE, this.listener);
-    listIDTypes().forEach((d) => {
+    EventHandler.getInstance().on(IDTypeManager.EVENT_REGISTER_IDTYPE, this.listener);
+    IDTypeManager.getInstance().listIdTypes().forEach((d) => {
       this.listener(null, <IDType>d);
     });
   }
 
   private destroy() {
-    globalOff(EVENT_REGISTER_IDTYPE, this.listener);
+    EventHandler.getInstance().off(IDTypeManager.EVENT_REGISTER_IDTYPE, this.listener);
     this.handler.forEach((h) => h.destroy());
     this.handler.length = 0;
   }

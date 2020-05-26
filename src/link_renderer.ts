@@ -4,7 +4,7 @@
  */
 import * as d3 from 'd3';
 import {AShape} from 'phovea_core';
-import {list as rlist, Range} from 'phovea_core';
+import {PluginRegistry} from 'phovea_core';
 import {IDType} from 'phovea_core';
 import {Vector2D} from 'phovea_core';
 
@@ -195,7 +195,7 @@ export class LinksRenderer {
               locations.push(-1);
             } else {
               locations.push(tolocate.length);
-              tolocate.push(rlist(mapped));
+              tolocate.push(Range.list(mapped));
             }
           });
           if (tolocate.length === 0) {
