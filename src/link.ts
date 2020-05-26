@@ -189,8 +189,8 @@ class Link {
   async update($g: d3.Selection<any>): Promise<void> {
     let a = this.a,
       b = this.b,
-      al = a.location.aabb(),
-      bl = b.location.aabb(),
+      al = <Rect>a.location.aabb(),
+      bl = <Rect>b.location.aabb(),
       tmp;
     if (bl.x2 < (al.x - 10)) {
       //swap
@@ -427,7 +427,7 @@ class LinkIDTypeContainer {
   }
 
   private moveSVG() {
-    const l = this.arr[0].location.aabb();
+    const l = <Rect>this.arr[0].location.aabb();
     this.arr.forEach((a) => {
       const b = a.location.aabb();
       let d = 0;
