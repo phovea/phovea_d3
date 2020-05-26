@@ -3,7 +3,7 @@
  * @deprecated old use links module
  */
 import * as d3 from 'd3';
-import {AShape} from 'phovea_core';
+import {AShape, Range} from 'phovea_core';
 import {PluginRegistry} from 'phovea_core';
 import {IDType} from 'phovea_core';
 import {Vector2D} from 'phovea_core';
