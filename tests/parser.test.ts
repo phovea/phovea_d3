@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import {asMatrix as parseMatrix} from 'phovea_core/src/matrix';
+import {asMatrix as parseMatrix} from 'phovea_core';
 
 describe('parseMatrix', () => {
   it('does not mutate original', () => {

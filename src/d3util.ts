@@ -1,12 +1,12 @@
 /**
  * Created by Samuel Gratzl on 08.10.2014.
  */
-import {onDOMNodeRemoved, extendClass, mixin} from 'phovea_core/src';
-import {toSelectOperation} from 'phovea_core/src/idtype';
-import {IDataType} from 'phovea_core/src/datatype';
-import {Range} from 'phovea_core/src/range';
-import {AVisInstance} from 'phovea_core/src/vis';
-import {wrap} from 'phovea_core/src/geom';
+import {onDOMNodeRemoved, extendClass, mixin} from 'phovea_core';
+import {toSelectOperation} from 'phovea_core';
+import {IDataType} from 'phovea_core';
+import {Range} from 'phovea_core';
+import {AVisInstance} from 'phovea_core';
+import {wrap} from 'phovea_core';
 import * as d3 from 'd3';
 
 export class D3Utils {

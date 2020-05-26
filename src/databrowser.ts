@@ -4,10 +4,10 @@
 
 import './style.scss';
 import {select, event as d3event, Selection, mouse} from 'd3';
-import {hasDnDType, updateDropEffect, mixin} from 'phovea_core/src';
-import {list as listData, tree as treeData, get as getData, INode} from 'phovea_core/src/data';
-import {EventHandler} from 'phovea_core/src/event';
-import {IDataType} from 'phovea_core/src/datatype';
+import {hasDnDType, updateDropEffect, mixin} from 'phovea_core';
+import {list as listData, tree as treeData, get as getData, INode} from 'phovea_core';
+import {EventHandler} from 'phovea_core';
+import {IDataType} from 'phovea_core';
 
 export interface IDropDataItemHandlerOptions {
   /**

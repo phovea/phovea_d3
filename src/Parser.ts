@@ -2,10 +2,10 @@
  * Created by Samuel Gratzl on 24.10.2015.
  */
 import {csv, text as d3text} from 'd3';
-import {IAnyMatrix} from 'phovea_core/src/matrix';
-import {asMatrix, IAsMatrixOptions} from 'phovea_core/src/matrix';
-import {ITable} from 'phovea_core/src/table';
-import {asTable as parseObjects, IAsTableOptions} from 'phovea_core/src/table';
+import {IAnyMatrix} from 'phovea_core';
+import {asMatrix, IAsMatrixOptions} from 'phovea_core';
+import {ITable} from 'phovea_core';
+import {asTable as parseObjects, IAsTableOptions} from 'phovea_core';
 
 
 export class Parser {

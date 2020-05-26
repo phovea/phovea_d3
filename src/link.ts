@@ -2,17 +2,17 @@
  * Created by Samuel Gratzl on 16.12.2014.
  */
 
-import {onDOMNodeRemoved, mixin} from 'phovea_core/src';
-import {Rect, polygon, AShape} from 'phovea_core/src/geom';
-import {Vector2D} from 'phovea_core/src/2D';
-import {IEventHandler} from 'phovea_core/src/event';
+import {onDOMNodeRemoved, mixin} from 'phovea_core';
+import {Rect, polygon, AShape} from 'phovea_core';
+import {Vector2D} from 'phovea_core';
+import {IEventHandler} from 'phovea_core';
 import {
   IDType, defaultSelectionType, hoverSelectionType, toSelectOperation,
   IHasUniqueId
-} from 'phovea_core/src/idtype';
-import {Range, Range1D, list as rlist} from 'phovea_core/src/range';
-import {list as listPlugins, IPluginDesc} from 'phovea_core/src/plugin';
-import {ILocateAble,} from 'phovea_core/src/vis';
+} from 'phovea_core';
+import {Range, Range1D, list as rlist} from 'phovea_core';
+import {list as listPlugins, IPluginDesc} from 'phovea_core';
+import {ILocateAble} from 'phovea_core';
 import * as d3 from 'd3';
 
 export interface IDataVis extends IEventHandler, ILocateAble {

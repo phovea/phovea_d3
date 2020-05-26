@@ -3,10 +3,10 @@
  * @deprecated old use links module
  */
 import * as d3 from 'd3';
-import {AShape} from 'phovea_core/src/geom';
-import {list as rlist, Range} from 'phovea_core/src/range';
-import {IDType} from 'phovea_core/src/idtype';
-import {Vector2D} from 'phovea_core/src/2D';
+import {AShape} from 'phovea_core';
+import {list as rlist, Range} from 'phovea_core';
+import {IDType} from 'phovea_core';
+import {Vector2D} from 'phovea_core';
 
 let _id = 0;
 const line = d3.svg.line<Vector2D>();

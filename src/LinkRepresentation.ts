@@ -3,8 +3,8 @@
  */
 
 import {IBandContext, IVisWrapper, ILink} from './link';
-import {wrap, AShape, Rect} from 'phovea_core/src/geom';
-import {all, Range1D, Range, asUngrouped, CompositeRange1D, Range1DGroup, list as rlist} from 'phovea_core/src/range';
+import {wrap, AShape, Rect} from 'phovea_core';
+import {all, Range1D, Range, asUngrouped, CompositeRange1D, Range1DGroup, list as rlist} from 'phovea_core';
 
 
 interface IGroup {

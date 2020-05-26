@@ -2,16 +2,16 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 import * as d3 from 'd3';
-import {on as globalOn, off as globalOff} from 'phovea_core/src/event';
+import {on as globalOn, off as globalOff} from 'phovea_core';
 import {
   IDType,
   defaultSelectionType,
   hoverSelectionType,
   list as listIDTypes,
   EVENT_REGISTER_IDTYPE
-} from 'phovea_core/src/idtype';
-import {Range} from 'phovea_core/src/range';
-import {mixin, onDOMNodeRemoved} from 'phovea_core/src';
+} from 'phovea_core';
+import {Range} from 'phovea_core';
+import {mixin, onDOMNodeRemoved} from 'phovea_core';
 
 export interface ISelectionIDTypeOptions {
   /**

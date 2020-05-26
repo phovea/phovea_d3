@@ -2,8 +2,8 @@
  * Created by sam on 04.02.2015.
  */
 import * as d3 from 'd3';
-import {ILayoutElem, ALayoutElem, ILayoutOptions} from 'phovea_core/src/layout';
-import {rect, Rect} from 'phovea_core/src/geom';
+import {ILayoutElem, ALayoutElem, ILayoutOptions} from 'phovea_core';
+import {rect, Rect} from 'phovea_core';
 
 export class SVGTransformLayoutElem extends ALayoutElem implements ILayoutElem {
   constructor(private readonly $elem: d3.Selection<any>, private rawWidth: number, private rawHeight: number, options: ILayoutOptions = {}) {
