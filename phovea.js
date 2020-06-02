@@ -8,24 +8,24 @@
 module.exports = function(registry) {
   //registry.push('extension-type', 'extension-id', function() { return import('./src/extension_impl'); }, {});
 
-  registry.push('autoload', 'caleydo_links', function() { return import('LinksRenderer'); }, {
+  registry.push('autoload', 'caleydo_links', function() { return import('./dist/link/LinksRenderer'); }, {
     'name': 'Link Renderer',
     'factory': 'createLinksRenderer'
   });
 
-  registry.push('link-representation', 'link-block', function() { return import('LinkRepresentation'); }, {
+  registry.push('link-representation', 'link-block', function() { return import('./dist/link/LinkRepresentation'); }, {
   'name': 'Block Link Representation',
   'factory': 'createBlockRep',
   'granularity': 0
  });
 
-  registry.push('link-representation', 'link-group', function() { return import('LinkRepresentation'); }, {
+  registry.push('link-representation', 'link-group', function() { return import('./dist/link/LinkRepresentation'); }, {
   'name': 'Group Link Representation',
   'factory': 'createGroupRep',
   'granularity': 5
  });
 
-  registry.push('link-representation', 'link-item', function() { return import('LinkRepresentation'); }, {
+  registry.push('link-representation', 'link-item', function() { return import('./dist/link/LinkRepresentation'); }, {
   'name': 'Item Link Representation',
   'factory': 'createItemRep',
   'granularity': 10
