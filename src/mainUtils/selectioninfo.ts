@@ -2,7 +2,7 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 import * as d3 from 'd3';
-import {EventHandler} from 'phovea_core';
+import {GlobalEventHandler} from 'phovea_core';
 import {
   IDType,
   SelectionUtils,
@@ -137,14 +137,14 @@ export class SelectionInfo {
     const $div = this.$div = parent.append('div').classed('selectioninfo', true);
     AppContext.getInstance().onDOMNodeRemoved(<Element>$div.node(), this.destroy, this);
 
-    EventHandler.getInstance().on(IDTypeManager.EVENT_REGISTER_IDTYPE, this.listener);
+    GlobalEventHandler.getInstance().on(IDTypeManager.EVENT_REGISTER_IDTYPE, this.listener);
     IDTypeManager.getInstance().listIdTypes().forEach((d) => {
       this.listener(null, <IDType>d);
     });
   }
 
   private destroy() {
-    EventHandler.getInstance().off(IDTypeManager.EVENT_REGISTER_IDTYPE, this.listener);
+    GlobalEventHandler.getInstance().off(IDTypeManager.EVENT_REGISTER_IDTYPE, this.listener);
     this.handler.forEach((h) => h.destroy());
     this.handler.length = 0;
   }
