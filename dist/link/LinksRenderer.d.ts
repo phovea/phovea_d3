@@ -21,6 +21,7 @@ export declare class LinksRenderer {
     private readonly $parent;
     private readonly $div;
     private readonly $svg;
+    private static readonly line;
     private visses;
     private observing;
     constructor(parent: HTMLElement);

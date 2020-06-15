@@ -108,4 +108,4 @@ export class HTMLLayoutElem extends ALayoutElem {
         return new HTMLLayoutElem(elem, options);
     }
 }
-//# sourceMappingURL=layout_d3util.js.map
+//# sourceMappingURL=layoutD3Utils.js.map

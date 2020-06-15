@@ -77,7 +77,7 @@ export class LinkRepresentation {
             return r;
         });
     }
-    selectCorners(a, b) {
+    static selectCorners(a, b) {
         const ac = a.aabb(), bc = b.aabb();
         if (ac.cx > bc.cx) {
             return ['w', 'e'];

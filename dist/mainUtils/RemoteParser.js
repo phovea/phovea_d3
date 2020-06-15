@@ -4,7 +4,7 @@
 import { csv, text as d3text } from 'd3';
 import { Matrix } from 'phovea_core';
 import { Table } from 'phovea_core';
-export class Parser {
+export class RemoteParser {
     static parseRemoteMatrix(url, options = {}) {
         return new Promise((resolve, reject) => {
             d3text(url, (error, data) => {
@@ -27,4 +27,4 @@ export class Parser {
         });
     }
 }
-//# sourceMappingURL=Parser.js.map
+//# sourceMappingURL=RemoteParser.js.map

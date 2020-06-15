@@ -5,20 +5,19 @@
 import * as d3 from 'd3';
 import { Range } from 'phovea_core';
 import { IDType } from 'phovea_core';
-let _id = 0;
-const line = d3.svg.line();
-function nextID() {
-    return _id++;
-}
-function selectCorners(a, b) {
-    const ac = a.aabb(), bc = b.aabb();
-    if (ac.cx > bc.cx) {
-        return ['w', 'e'];
+class LinksRendererId {
+    constructor() {
+        this._id = 0;
     }
-    else {
-        return ['e', 'w'];
+    nextID() {
+        return this._id++;
     }
-    //TODO better
+    static getInstance() {
+        if (!LinksRendererId.instance) {
+            LinksRendererId.instance = new LinksRendererId();
+        }
+        return LinksRendererId.instance;
+    }
 }
 export class LinksRenderer {
     constructor(parent) {
@@ -41,7 +40,7 @@ export class LinksRenderer {
             l,
             visses: [],
             push: (vis, dimension) => {
-                this.visses.push({ vis, dim: dimension, id: nextID() });
+                this.visses.push({ vis, dim: dimension, id: LinksRendererId.getInstance().nextID() });
             },
             remove: (vis) => {
                 const v = this.visses;
@@ -118,7 +117,7 @@ export class LinksRenderer {
                 const links = [];
                 locs.forEach((loc, i) => {
                     if (loc && ex.locs[i]) {
-                        const cs = selectCorners(loc, ex.locs[i]);
+                        const cs = this.selectCorners(loc, ex.locs[i]);
                         const r = [loc.corner(cs[0]), ex.locs[i].corner(cs[1])];
                         links.push(swap ? r.reverse() : r);
                     }
@@ -126,7 +125,7 @@ export class LinksRenderer {
                 const $links = $g.selectAll('path').data(links);
                 $links.enter().append('path').attr('class', 'phovea-select-selected');
                 $links.exit().remove();
-                $links.attr('d', line);
+                $links.attr('d', this.line);
             });
         }
         const addLinks = (entry) => {
@@ -197,4 +196,5 @@ export class LinksRenderer {
         return new LinksRenderer(parent);
     }
 }
+LinksRenderer.line = d3.svg.line();
 //# sourceMappingURL=LinksRenderer.js.map

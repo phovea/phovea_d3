@@ -8,7 +8,7 @@ import {ITable} from 'phovea_core';
 import {Table, IAsTableOptions} from 'phovea_core';
 
 
-export class Parser {
+export class RemoteParser {
   static parseRemoteMatrix(url: string, options: IAsMatrixOptions = {}): Promise<IAnyMatrix> {
     return new Promise((resolve, reject) => {
       d3text(url, (error: string, data: any) => {

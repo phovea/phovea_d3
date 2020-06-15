@@ -97,7 +97,7 @@ export class LinkRepresentation {
     });
   }
 
-  selectCorners(a: AShape, b: AShape) {
+  static selectCorners(a: AShape, b: AShape) {
     const ac = a.aabb(),
       bc = b.aabb();
     if (ac.cx > bc.cx) {

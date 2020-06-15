@@ -4,27 +4,8 @@
  */
 import * as d3 from 'd3';
 import {AShape, Range} from 'phovea_core';
-import {PluginRegistry} from 'phovea_core';
 import {IDType} from 'phovea_core';
 import {Vector2D} from 'phovea_core';
-
-let _id = 0;
-const line = d3.svg.line<Vector2D>();
-
-function nextID() {
-  return _id++;
-}
-
-function selectCorners(a: AShape, b: AShape) {
-  const ac = a.aabb(),
-    bc = b.aabb();
-  if (ac.cx > bc.cx) {
-    return ['w', 'e'];
-  } else {
-    return ['e', 'w'];
-  }
-  //TODO better
-}
 
 interface IDontKnow {
   ids(): Promise<Range>;
@@ -46,10 +27,27 @@ interface ILinksRendererEntry {
   remove(vis: IDontKnow): void;
 }
 
+class LinksRendererId {
+  private _id = 0;
+  public nextID() {
+    return this._id++;
+  }
+  private static instance: LinksRendererId;
+
+  public static getInstance(): LinksRendererId {
+    if (!LinksRendererId.instance) {
+      LinksRendererId.instance = new LinksRendererId();
+    }
+    return LinksRendererId.instance;
+  }
+}
+
+
 export class LinksRenderer {
   private readonly $parent: d3.Selection<any>;
   private readonly $div: d3.Selection<any>;
   private readonly $svg: d3.Selection<any>;
+  private static readonly line = d3.svg.line<Vector2D>();
   private visses: IVisEntry[] = [];
   private observing = d3.map<ILinksRendererEntry>();
 
@@ -73,7 +71,7 @@ export class LinksRenderer {
       l,
       visses: [],
       push: (vis, dimension) => {
-        this.visses.push({vis, dim: dimension, id: nextID()});
+        this.visses.push({vis, dim: dimension, id: LinksRendererId.getInstance().nextID()});
       },
       remove: (vis) => {
         const v = this.visses;
@@ -154,7 +152,7 @@ export class LinksRenderer {
         const links: Vector2D[][]= [];
         locs.forEach((loc, i) => {
           if (loc && ex.locs[i]) {
-            const cs = selectCorners(loc, ex.locs[i]);
+            const cs = this.selectCorners(loc, ex.locs[i]);
             const r = [loc.corner(cs[0]), ex.locs[i].corner(cs[1])];
             links.push(swap ? r.reverse() : r);
           }
@@ -162,7 +160,7 @@ export class LinksRenderer {
         const $links = $g.selectAll('path').data(links);
         $links.enter().append('path').attr('class', 'phovea-select-selected');
         $links.exit().remove();
-        $links.attr('d', line);
+        $links.attr('d', this.line);
       });
     }
 

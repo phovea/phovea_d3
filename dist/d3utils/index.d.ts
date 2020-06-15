@@ -1,2 +1,2 @@
-export * from './d3util';
-export * from './layout_d3util';
+export * from './D3Utils';
+export * from './layoutD3Utils';
