@@ -1,0 +1,30 @@
+/**
+ */
+
+.phovea-databrowser {
+  li.collapsed ul {
+    display: none;
+  }
+  li > span {
+    cursor: pointer;
+    &[draggable="true"] {
+      cursor: -moz-grab;
+      cursor: -webkit-grab;
+    }
+    &:hover {
+      font-weight: bold;
+    }
+  }
+}
+
+.phovea-tooltip {
+  position: absolute;
+
+  padding: 10px;
+  color: white;
+  background-color: black;
+  border-radius: 10px;
+
+  pointer-events: none; //doesn't interact with the mouse
+  z-index : 10; //on top
+}
