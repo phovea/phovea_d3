@@ -1,7 +1,7 @@
 {
   "name": "phovea_d3",
   "description": "D3 utilitities for Phovea",
-  "version": "5.0.0",
+  "version": "5.0.1-SNAPSHOT",
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",
@@ -50,7 +50,7 @@
     "dist": "mkdir lib && cd dist && tar cvzf ../lib/phovea_d3.tar.gz *"
   },
   "dependencies": {
-    "phovea_core": "^5.0.0",
+    "phovea_core": "github:phovea/phovea_core#develop",
     "d3": "~3.5.17"
   },
   "devDependencies": {
