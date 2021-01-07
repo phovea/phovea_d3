@@ -1,0 +1,15 @@
+.phovea-databrowser {
+  li.collapsed ul {
+    display: none;
+  }
+  li > span {
+    cursor: pointer;
+    &[draggable="true"] {
+      cursor: -moz-grab;
+      cursor: -webkit-grab;
+    }
+    &:hover {
+      font-weight: bold;
+    }
+  }
+}

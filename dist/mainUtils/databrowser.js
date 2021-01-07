@@ -1,7 +1,6 @@
 /**
  * Created by Samuel Gratzl on 15.12.2014.
  */
-import '../scss/main.scss';
 import { select, event as d3event, mouse } from 'd3';
 import { DnDUtils, BaseUtils } from 'phovea_core';
 import { DataCache } from 'phovea_core';

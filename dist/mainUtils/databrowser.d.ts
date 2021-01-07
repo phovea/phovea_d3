@@ -2,7 +2,6 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 /// <reference types="d3" />
-import '../scss/main.scss';
 import { EventHandler } from 'phovea_core';
 import { IDataType } from 'phovea_core';
 export interface IDropDataItemHandlerOptions {
