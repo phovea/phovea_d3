@@ -1,7 +1,6 @@
 /**
  * Created by Samuel Gratzl on 05.08.2014.
  */
-import '../scss/main.scss';
 import * as d3 from 'd3';
 export declare class ToolTip {
     static getTooltip(): d3.Selection<any>;
