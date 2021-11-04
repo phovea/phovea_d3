@@ -3,8 +3,8 @@
  * @deprecated old use links module
  */
 import * as d3 from 'd3';
-import { Range } from 'phovea_core';
-import { IDType } from 'phovea_core';
+import { Range } from 'tdp_core';
+import { IDType } from 'tdp_core';
 class LinksRendererId {
     constructor() {
         this._id = 0;

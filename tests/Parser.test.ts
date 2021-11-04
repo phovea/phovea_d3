@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import {Matrix} from 'phovea_core';
+import {Matrix} from 'tdp_core';
 
 describe('parseMatrix', () => {
   it('does not mutate original', () => {

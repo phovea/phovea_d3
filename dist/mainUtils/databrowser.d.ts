@@ -2,8 +2,8 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 /// <reference types="d3" />
-import { EventHandler } from 'phovea_core';
-import { IDataType } from 'phovea_core';
+import { EventHandler } from 'tdp_core';
+import { IDataType } from 'tdp_core';
 export interface IDropDataItemHandlerOptions {
     /**
      * data types (matrix, vector, ...) to filter

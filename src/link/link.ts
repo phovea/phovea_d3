@@ -2,17 +2,17 @@
  * Created by Samuel Gratzl on 16.12.2014.
  */
 
-import {AppContext, BaseUtils} from 'phovea_core';
-import {Rect, Polygon, AShape} from 'phovea_core';
-import {Vector2D} from 'phovea_core';
-import {IEventHandler} from 'phovea_core';
+import {AppContext, BaseUtils} from 'tdp_core';
+import {Rect, Polygon, AShape} from 'tdp_core';
+import {Vector2D} from 'tdp_core';
+import {IEventHandler} from 'tdp_core';
 import {
   IDType, SelectionUtils,
   IHasUniqueId
-} from 'phovea_core';
-import {Range, Range1D} from 'phovea_core';
-import {PluginRegistry, IPluginDesc} from 'phovea_core';
-import {ILocateAble} from 'phovea_core';
+} from 'tdp_core';
+import {Range, Range1D} from 'tdp_core';
+import {PluginRegistry, IPluginDesc} from 'tdp_core';
+import {ILocateAble} from 'tdp_core';
 import * as d3 from 'd3';
 
 export interface IDataVis extends IEventHandler, ILocateAble {

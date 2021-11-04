@@ -1,4 +1,4 @@
-import { IDataType } from 'phovea_core';
+import { IDataType } from 'tdp_core';
 import * as d3 from 'd3';
 export declare class D3Utils {
     static transform(x?: number, y?: number, rotate?: number, scaleX?: number, scaleY?: number): d3.Transform;

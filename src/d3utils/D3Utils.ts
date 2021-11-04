@@ -1,12 +1,12 @@
 /**
  * Created by Samuel Gratzl on 08.10.2014.
  */
-import {AppContext, BaseUtils} from 'phovea_core';
-import {SelectionUtils} from 'phovea_core';
-import {IDataType} from 'phovea_core';
-import {Range} from 'phovea_core';
-import {AVisInstance} from 'phovea_core';
-import {ShapeUtils} from 'phovea_core';
+import {AppContext, BaseUtils} from 'tdp_core';
+import {SelectionUtils} from 'tdp_core';
+import {IDataType} from 'tdp_core';
+import {Range} from 'tdp_core';
+import {AVisInstance} from 'tdp_core';
+import {ShapeUtils} from 'tdp_core';
 import * as d3 from 'd3';
 
 export class D3Utils {

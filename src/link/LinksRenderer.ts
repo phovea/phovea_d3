@@ -3,9 +3,9 @@
  * @deprecated old use links module
  */
 import * as d3 from 'd3';
-import {AShape, Range} from 'phovea_core';
-import {IDType} from 'phovea_core';
-import {Vector2D} from 'phovea_core';
+import {AShape, Range} from 'tdp_core';
+import {IDType} from 'tdp_core';
+import {Vector2D} from 'tdp_core';
 
 interface IDontKnow {
   ids(): Promise<Range>;

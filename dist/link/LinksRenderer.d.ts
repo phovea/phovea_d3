@@ -1,5 +1,5 @@
-import { Range } from 'phovea_core';
-import { IDType } from 'phovea_core';
+import { Range } from 'tdp_core';
+import { IDType } from 'tdp_core';
 interface IDontKnow {
     ids(): Promise<Range>;
     data: any;

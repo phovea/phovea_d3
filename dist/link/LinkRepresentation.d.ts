@@ -2,7 +2,7 @@
  * Created by sam on 16.02.2015.
  */
 import { IBandContext, IVisWrapper, ILink } from './link';
-import { AShape, Rect } from 'phovea_core';
+import { AShape, Rect } from 'tdp_core';
 export declare class LinkRepresentation {
     static createBlockRep(context: IBandContext, a: IVisWrapper, aa: Rect, b: IVisWrapper, bb: Rect): Promise<ILink[]>;
     static toArray(a: any): any[];
