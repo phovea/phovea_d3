@@ -2,14 +2,14 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 import * as d3 from 'd3';
-import {GlobalEventHandler} from 'phovea_core';
+import {GlobalEventHandler} from 'tdp_core';
 import {
   IDType,
   SelectionUtils,
   IDTypeManager
-} from 'phovea_core';
-import {Range} from 'phovea_core';
-import {BaseUtils, AppContext} from 'phovea_core';
+} from 'tdp_core';
+import {Range} from 'tdp_core';
+import {BaseUtils, AppContext} from 'tdp_core';
 
 export interface ISelectionIDTypeOptions {
   /**

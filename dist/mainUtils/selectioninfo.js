@@ -2,9 +2,9 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 import * as d3 from 'd3';
-import { GlobalEventHandler } from 'phovea_core';
-import { IDType, SelectionUtils, IDTypeManager } from 'phovea_core';
-import { BaseUtils, AppContext } from 'phovea_core';
+import { GlobalEventHandler } from 'tdp_core';
+import { IDType, SelectionUtils, IDTypeManager } from 'tdp_core';
+import { BaseUtils, AppContext } from 'tdp_core';
 export class SelectionIDType {
     constructor(idType, parent, options = {}) {
         this.idType = idType;

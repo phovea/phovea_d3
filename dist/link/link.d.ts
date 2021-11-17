@@ -1,12 +1,12 @@
 /**
  * Created by Samuel Gratzl on 16.12.2014.
  */
-import { Rect, AShape } from 'phovea_core';
-import { IEventHandler } from 'phovea_core';
-import { IDType } from 'phovea_core';
-import { Range, Range1D } from 'phovea_core';
-import { IPluginDesc } from 'phovea_core';
-import { ILocateAble } from 'phovea_core';
+import { Rect, AShape } from 'tdp_core';
+import { IEventHandler } from 'tdp_core';
+import { IDType } from 'tdp_core';
+import { Range, Range1D } from 'tdp_core';
+import { IPluginDesc } from 'tdp_core';
+import { ILocateAble } from 'tdp_core';
 import * as d3 from 'd3';
 export interface IDataVis extends IEventHandler, ILocateAble {
     readonly id: number;
@@ -36,7 +36,7 @@ declare class VisWrapper implements IVisWrapper {
     get id(): number;
     get location(): AShape;
     dimOf(idtype: IDType): number;
-    get data(): import("phovea_core").IDataType;
+    get data(): import("tdp_core").IDataType;
     ids(): Promise<Range>;
     get idtypes(): IDType[];
     locate(...range: Range[]): Promise<any>;

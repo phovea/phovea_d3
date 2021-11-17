@@ -2,7 +2,7 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 import * as d3 from 'd3';
-import { IDType } from 'phovea_core';
+import { IDType } from 'tdp_core';
 export interface ISelectionIDTypeOptions {
     /**
      * show the names instead of the ids

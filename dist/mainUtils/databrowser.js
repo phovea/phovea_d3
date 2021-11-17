@@ -2,9 +2,9 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 import { select, event as d3event, mouse } from 'd3';
-import { DnDUtils, BaseUtils } from 'phovea_core';
-import { DataCache } from 'phovea_core';
-import { EventHandler } from 'phovea_core';
+import { DnDUtils, BaseUtils } from 'tdp_core';
+import { DataCache } from 'tdp_core';
+import { EventHandler } from 'tdp_core';
 export class DropDataItemHandler extends EventHandler {
     constructor(elem, handler, options = {}) {
         super();

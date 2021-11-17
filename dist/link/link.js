@@ -1,12 +1,12 @@
 /**
  * Created by Samuel Gratzl on 16.12.2014.
  */
-import { AppContext, BaseUtils } from 'phovea_core';
-import { Polygon } from 'phovea_core';
-import { Vector2D } from 'phovea_core';
-import { IDType, SelectionUtils } from 'phovea_core';
-import { Range } from 'phovea_core';
-import { PluginRegistry } from 'phovea_core';
+import { AppContext, BaseUtils } from 'tdp_core';
+import { Polygon } from 'tdp_core';
+import { Vector2D } from 'tdp_core';
+import { IDType, SelectionUtils } from 'tdp_core';
+import { Range } from 'tdp_core';
+import { PluginRegistry } from 'tdp_core';
 import * as d3 from 'd3';
 class VisWrapper {
     /**

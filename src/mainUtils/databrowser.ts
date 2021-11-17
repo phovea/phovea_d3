@@ -3,10 +3,10 @@
  */
 
 import {select, event as d3event, Selection, mouse} from 'd3';
-import {DnDUtils, BaseUtils} from 'phovea_core';
-import {DataCache, INode} from 'phovea_core';
-import {EventHandler} from 'phovea_core';
-import {IDataType} from 'phovea_core';
+import {DnDUtils, BaseUtils} from 'tdp_core';
+import {DataCache, INode} from 'tdp_core';
+import {EventHandler} from 'tdp_core';
+import {IDataType} from 'tdp_core';
 
 export interface IDropDataItemHandlerOptions {
   /**

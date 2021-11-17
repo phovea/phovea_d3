@@ -3,8 +3,8 @@
  */
 
 import {IBandContext, IVisWrapper, ILink} from './link';
-import {ShapeUtils, AShape, Rect} from 'phovea_core';
-import {Range1D, Range, CompositeRange1D, Range1DGroup} from 'phovea_core';
+import {ShapeUtils, AShape, Rect} from 'tdp_core';
+import {Range1D, Range, CompositeRange1D, Range1DGroup} from 'tdp_core';
 
 
 interface IGroup {

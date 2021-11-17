@@ -1,8 +1,8 @@
 /**
  * Created by sam on 16.02.2015.
  */
-import { ShapeUtils } from 'phovea_core';
-import { Range, CompositeRange1D, Range1DGroup } from 'phovea_core';
+import { ShapeUtils } from 'tdp_core';
+import { Range, CompositeRange1D, Range1DGroup } from 'tdp_core';
 export class LinkRepresentation {
     static createBlockRep(context, a, aa, b, bb) {
         const adim = a.dimOf(context.idtype), bdim = b.dimOf(context.idtype);
